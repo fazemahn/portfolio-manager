@@ -1,1 +1,36 @@
-<h1>test</h1>
+{% extends "app/base.html" %}
+{% block content %}
+    <h1>Search</h1>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Search for a stock by name or ticker" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button"><i class="fa fa-search"></i></button>
+        </div>
+    </div>
+
+    
+    
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">AAPL</a>
+                <small class="text-success">(1.01%)</small>
+                <a class="float-right fa fa-star text-warning"></a>
+            </div>
+            <h5><a class="article-title" href="#">Apple Inc.</a></h2>
+        </div>
+    </article>
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">AMZN</a>
+                <small class="text-danger">(0.11%)</small>
+                <a class="float-right far fa-star text-warning"></a>
+            </div>
+            <h5><a class="article-title" href="#">Amazon.com, Inc.</a></h2>
+        </div>
+    </article>
+
+
+    
+{% endblock content %} 
