@@ -37,17 +37,18 @@ def searchName(request):
         i = 0
         #data.decode("utf-8")
         for exchange in data['quotes']:
-            args[i] = {}
-            args[i]["exchange"] = exchange['exchange']
-            try:
-                args[i]["name"] = exchange['longname']
-            except:
+            if exchange['quoteType'] == "EQUITY": # Only interested in equities (stocks)
+                args[i] = {}
+                args[i]["exchange"] = exchange['exchange']
                 try:
-                    args[i]["name"] = exchange['shortname']
+                    args[i]["name"] = exchange['longname']
                 except:
-                    args[i]["name"] = "Name Unavailable"
-            args[i]["symbol"] = exchange['symbol']
-            args[i]["type"] = exchange['quoteType']
-            i += 1
-        print(args)
+                    try:
+                        args[i]["name"] = exchange['shortname']
+                    except:
+                        args[i]["name"] = "Name Unavailable"
+                args[i]["symbol"] = exchange['symbol']
+                args[i]["type"] = exchange['quoteType']
+                i += 1
+    print(args)
     return render(request, 'app/searchForm.html', {'args':args})
