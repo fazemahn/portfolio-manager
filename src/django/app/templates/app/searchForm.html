@@ -1,0 +1,26 @@
+{% extends "app/home.html" %}
+
+{% block args %}
+
+<div>
+  {% for key, info in args.items%}
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">{{info.symbol}}</a>
+                <small class="text-success">(1.01%)</small>
+                <a class="float-right fa fa-star text-warning"></a>
+            </div>
+            <h4><a class="article-title" href="#">{{info.name}}</a></h4>
+            <h5><a class="article-title" href="#">Exchange: {{info.exchange}}</a></h5>
+            <h5><a class="article-title" href="#">Quote Type: {{info.type}}</a></h5>
+
+        </div>
+    </article>
+
+  {% endfor %}
+</div>
+
+
+
+{% endblock args %}
