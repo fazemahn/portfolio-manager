@@ -5,22 +5,23 @@ class DBManager:
     class __DBManager:
 
         def __init__(self):
-            with open("shared/connections.json") as config:
-                data = json.load(config)
-                db = data["monte_carlo"]
-                self.connection = connector.connect(**db)
-
-        def __str__(self):
-            return repr(self)
+            self.connections = {}
+            with open("shared/connections.json") as conns:
+                self.config = json.load(conns)
 
     instance = None
+    
 
     def __init__(self):
         if not DBManager.instance:
             DBManager.instance = DBManager.__DBManager()
 
-    def __getattr__(self, name):
-        return getattr(self.instance, name)
 
-    def getconnection(self):
-        return self.instance.connection
+    def getconnection(self, dbname):
+        if dbname not in self.instance.connections:
+                if dbname not in self.instance.config:
+                    raise Exception (f'Missing config for database: {dbname}')
+                self.instance.connections[dbname] = connector.connect(**self.instance.config[dbname])
+        return self.instance.connections[dbname]
+
+            
