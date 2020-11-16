@@ -1,8 +1,0 @@
-{
-    "monte_carlo": {
-        "user": "root",
-        "password": "connect123xx",
-        "host": "localhost",
-        "database": "monte_carlo"
-    }
-}
