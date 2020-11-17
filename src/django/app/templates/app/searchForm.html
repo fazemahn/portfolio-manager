@@ -11,16 +11,19 @@
                 <small class="text-success">(1.01%)</small>
                 <a class="float-right fa fa-star text-warning"></a>
             </div>
-            <h4><a class="article-title" href="#">{{info.name}}</a></h4>
+
+            <!--hidden input and the button hold values that are passed to the simulate function-->
+            <form method="POST" action="/simulate/">{% csrf_token %}
+              <input type="hidden" name="stockSymbol" value="{{ info.symbol }}">
+              <button type="submit" name="stockName" value="{{ info.name }}">
+                <h4>{{info.name}}</h4>
+              </button>
+            </form>
             <h5><a class="article-title" href="#">Exchange: {{info.exchange}}</a></h5>
             <h5><a class="article-title" href="#">Quote Type: {{info.type}}</a></h5>
-
         </div>
     </article>
 
   {% endfor %}
 </div>
-
-
-
 {% endblock args %}
