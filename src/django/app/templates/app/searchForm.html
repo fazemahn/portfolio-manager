@@ -16,11 +16,9 @@
             <form method="POST" action="/simulate/">{% csrf_token %}
               <input type="hidden" name="stockSymbol" value="{{ info.symbol }}">
               <button type="submit" name="stockName" value="{{ info.name }}">
-                <h4>{{info.name}}</h4>
+                <h4>{{info.name}} {{info.exchange}}</h4>
               </button>
             </form>
-            <h5><a class="article-title" href="#">Exchange: {{info.exchange}}</a></h5>
-            <h5><a class="article-title" href="#">Quote Type: {{info.type}}</a></h5>
         </div>
     </article>
 

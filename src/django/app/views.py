@@ -1,8 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+
+from shared import dbmanager
+
 import http.client
 import json #to parse finance API
 from django.db import connection #access to default database in monte_project/settings.py
+
 
 
 # Create your views here.
@@ -61,17 +65,18 @@ def searchName(request):
         #and save them as dictionaries into args
         #each dictionary in args is a different stock
         for exchange in data['quotes']:
-            args[i] = {}
-            args[i]["exchange"] = exchange['exchange']
-            try:
-                args[i]["name"] = exchange['longname']
-            except:
+            if exchange['quoteType'] == "EQUITY": # Only interested in equities (stocks)
+                args[i] = {}
+                args[i]["exchange"] = exchange['exchange']
                 try:
-                    args[i]["name"] = exchange['shortname']
+                    args[i]["name"] = exchange['longname']
                 except:
-                    args[i]["name"] = "Name Unavailable"
-            args[i]["symbol"] = exchange['symbol']
-            args[i]["type"] = exchange['quoteType']
-            i += 1
-
+                    try:
+                        args[i]["name"] = exchange['shortname']
+                    except:
+                        args[i]["name"] = "Name Unavailable"
+                args[i]["symbol"] = exchange['symbol']
+                args[i]["type"] = exchange['quoteType']
+                i += 1
+    print(args)
     return render(request, 'app/searchForm.html', {'args':args})
