@@ -1,3 +1,4 @@
+'''
 import mysql.connector as connector
 import json
 
@@ -10,7 +11,7 @@ class DBManager:
                 self.config = json.load(conns)
 
     instance = None
-    
+
 
     def __init__(self):
         if not DBManager.instance:
@@ -24,4 +25,4 @@ class DBManager:
                 self.instance.connections[dbname] = connector.connect(**self.instance.config[dbname])
         return self.instance.connections[dbname]
 
-            
+'''        

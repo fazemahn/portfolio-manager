@@ -2,23 +2,26 @@
 
 {% block args %}
 
+<div>
+  {% for key, info in args.items%}
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="#">{{info.symbol}}</a>
+                <small class="text-success">(1.01%)</small>
+                <a class="float-right fa fa-star text-warning"></a>
+            </div>
 
-{% for key, info in args.items%}
-  <article class="media content-section">
-      <div class="media-body">
-          <div class="article-metadata">
-              <a class="mr-2" href="#">{{info.symbol}}</a>
-              <small class="text-success">(1.01%)</small>
-              <a class="float-right fa fa-star text-warning cur-pointer"></a>
-          </div>
-          <h4><a class="article-title" href="#">{{info.name}} ({{info.exchange}})</a></h4>
+            <!--hidden input and the button hold values that are passed to the simulate function-->
+            <form method="POST" action="/simulate/">{% csrf_token %}
+              <input type="hidden" name="stockSymbol" value="{{ info.symbol }}">
+              <button type="submit" name="stockName" value="{{ info.name }}">
+                <h4>{{info.name}} {{info.exchange}}</h4>
+              </button>
+            </form>
+        </div>
+    </article>
 
-      </div>
-  </article>
-
-{% endfor %}
-
-
-
-
+  {% endfor %}
+</div>
 {% endblock args %}
