@@ -77,9 +77,9 @@ WSGI_APPLICATION = 'monte_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'monte_carlo',
-        'USER': 'root',
-        'PASSWORD': 'Thatguy101',
+        'NAME': 'DB_NAME',
+        'USER': 'USER',
+        'PASSWORD': 'PASSWORD',
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
