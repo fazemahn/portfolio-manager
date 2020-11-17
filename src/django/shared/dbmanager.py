@@ -25,4 +25,4 @@ class DBManager:
                 self.instance.connections[dbname] = connector.connect(**self.instance.config[dbname])
         return self.instance.connections[dbname]
 
-'''        
+'''
