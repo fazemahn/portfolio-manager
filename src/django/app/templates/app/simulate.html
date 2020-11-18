@@ -9,7 +9,7 @@
 
     <div class="d-inline">
         <h3 class="d-inline-block">{{stockInfo.symbol}} </h3>
-        <h3 class="text-success d-inline-block">(1.01%)</h3>
+        <h3 class="{% if stockInfo.change > 0 %}text-success{% elif stockInfo.change < 0 %}text-danger{% endif %} d-inline-block">({{stockInfo.change}}%)</h3>
     </div>
   {% endblock stockInfo %}
     <hr/>

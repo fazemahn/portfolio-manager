@@ -7,18 +7,15 @@
     <article class="media content-section">
         <div class="media-body">
             <div class="article-metadata">
-                <a class="mr-2" href="#">{{info.symbol}}</a>
-                <small class="text-success">(1.01%)</small>
-                <a class="float-right fa fa-star text-warning"></a>
+                <a class="mr-2" href="/simulate/{{info.symbol}}">{{info.symbol}}</a>
+                <a class="float-right fa fa-star text-warning cur-pointer"></a>
             </div>
 
             <!--hidden input and the button hold values that are passed to the simulate function-->
-            <form method="POST" action="/simulate/">{% csrf_token %}
-              <input type="hidden" name="stockSymbol" value="{{ info.symbol }}">
-              <button type="submit" name="stockName" value="{{ info.name }}">
-                <h4>{{info.name}} {{info.exchange}}</h4>
-              </button>
-            </form>
+            
+            <h4><a class="article-title cur-pointer" href="/simulate/{{info.symbol}}">{{info.name}} {{info.exchange}}</a></h4>
+            
+
         </div>
     </article>
 
