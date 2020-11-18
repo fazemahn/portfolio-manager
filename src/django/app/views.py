@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
+from django.http import Http404
 from shared import dbmanager
 
 import http.client
@@ -17,28 +17,45 @@ def home (request):
 def favourites (request):
     return render(request, 'app/favourites.html')
 
-def simulate (request):
+def simulate (request, stockSymbol):
+
+    conn = http.client.HTTPSConnection("apidojo-yahoo-finance-v1.p.rapidapi.com")
+    #api info
+    headers = {
+        'x-rapidapi-key': "d9ef4f5324msh8ace8b2abea3cc2p18ac4ajsn03ca9ecf4926",
+        'x-rapidapi-host': "apidojo-yahoo-finance-v1.p.rapidapi.com",
+        }
+
+    conn.request("GET", f'/stock/v2/get-statistics?symbol={stockSymbol}&region=US', headers=headers)
+    res = conn.getresponse()
+    
+    try:
+        data = json.loads(res.read().decode("utf-8"))
+    except:
+        return render(request, 'app/error404.html')
+
     stockInfo = {}
     commentInfo = {}
+    stockInfo['symbol'] = stockSymbol
+    stockInfo['name'] = data["price"]["longName"]
+    stockInfo['change'] = round(data["price"]["regularMarketChangePercent"]["raw"] * 100, 2)
+  
 
-    if request.method == "POST":
-        stockInfo['name'] = request.POST.get('stockName')
-        stockInfo['symbol'] = request.POST.get('stockSymbol')
 
-        #find all comments for the stock that was clicked on
-        cursor = connection.cursor()
-        cursor.execute('SELECT * FROM comments WHERE Ticker = (%s)', (stockInfo['symbol'],))
-        comments = cursor.fetchall()
+    #find all comments for the stock that was clicked on
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM comments WHERE Ticker = (%s)', (stockInfo['symbol'],))
+    comments = cursor.fetchall()
 
-        #gather all information about each comment
-        i = 0
-        for comment in comments:
-            commentInfo[i] = {}
-            commentInfo[i]["user"] = comment[0]
-            commentInfo[i]["date"] = comment[2]
-            commentInfo[i]["content"] = comment[3]
-            i += 1
-        #print(comments)
+    #gather all information about each comment
+    i = 0
+    for comment in comments:
+        commentInfo[i] = {}
+        commentInfo[i]["user"] = comment[0]
+        commentInfo[i]["date"] = comment[2]
+        commentInfo[i]["content"] = comment[3]
+        i += 1
+    #print(comments)
     return render(request, 'app/simulate.html', {'stockInfo':stockInfo, 'commentInfo':commentInfo})
 
 def searchName(request):
