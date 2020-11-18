@@ -1,15 +1,19 @@
 {% extends "app/base.html" %}
 {% block content %}
     <h1>Search</h1>
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Search for a stock by name or ticker" aria-label="Recipient's username" aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button"><i class="fa fa-search"></i></button>
+    <form method="POST" action="/search/">{% csrf_token %}
+        <div class="input-group mb-3">
+        
+            <input type="text" name="searchBar" class="form-control" placeholder="Search for a stock by name or ticker" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button"><i class="fa fa-search"></i></button>
+            </div>
         </div>
-    </div>
+    </form>
 
-    
-    
+
+<!--
     <article class="media content-section">
         <div class="media-body">
             <div class="article-metadata">
@@ -30,7 +34,8 @@
             <h5><a class="article-title" href="#">Amazon.com, Inc.</a></h2>
         </div>
     </article>
+-->
 
-
-    
-{% endblock content %} 
+{% block args %}
+{% endblock args %}
+{% endblock content %}
