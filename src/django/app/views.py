@@ -78,5 +78,5 @@ def searchName(request):
                 args[i]["symbol"] = exchange['symbol']
                 args[i]["type"] = exchange['quoteType']
                 i += 1
-    print(args)
+    
     return render(request, 'app/searchForm.html', {'args':args})
