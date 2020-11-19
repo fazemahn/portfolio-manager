@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import Http404
-from shared import dbmanager
+from datetime import datetime, timedelta
+
 
 import http.client
 import json #to parse finance API
@@ -56,7 +57,13 @@ def simulate (request, stockSymbol):
         commentInfo[i]["content"] = comment[3]
         i += 1
     #print(comments)
-    return render(request, 'app/simulate.html', {'stockInfo':stockInfo, 'commentInfo':commentInfo})
+    dateInfo = {}
+    dateInfo["max"] = datetime.today().strftime('%Y-%m-%d')
+    dateInfo["default"] = (datetime.today() - timedelta(days=31)).strftime('%Y-%m-%d')
+    dateInfo["min"] = (datetime.today() - timedelta(days=365)).strftime('%Y-%m-%d')
+
+
+    return render(request, 'app/simulate.html', {'stockInfo':stockInfo, 'commentInfo':commentInfo, 'dateInfo': dateInfo})
 
 def searchName(request):
     args = {}
