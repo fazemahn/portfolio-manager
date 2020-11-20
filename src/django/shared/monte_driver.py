@@ -15,4 +15,8 @@ mon = Monte('AMD', 100, 30, start=dt.datetime(2018,1,1), end=dt.datetime.now(), 
 
 mon.create_DataFrame()
 mon.simulate()
-mon.plot()
+html_str = mon.plot()
+
+html_file = open("plots.html","w") # writes string to html file
+html_file.write(html_str)
+html_file.close()

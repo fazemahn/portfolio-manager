@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import pandas_datareader as pdr
 import matplotlib.pyplot as plt
+import mpld3
 from scipy.stats import norm
 
 
@@ -67,14 +68,47 @@ class Monte:
 
         Function that plots the output for the end user. Histogram with a PDF fit is a placeholder.
         """
+        # Creating the fig object for the matplotlib canvas
+        fig, axs = plt.subplots(2, 2, figsize = (16,10))
+        
+        # Stock Data Subplot ################################################################
+        stock_plot = axs[0, 0]
+        
+        stock_plot.plot(self.data)
+        stock_plot.set_xlabel('Date')
+        stock_plot.set_ylabel('Adjusted Closing Price')
+        stock_plot.set_title("Adjusted Closing Prices Over Time")
+
+        # Single Future Price Subplot #######################################################
+        plt.subplot(2,2,3)
+
+        single = []
+        for item in self.monte_sims:
+            single.append(item[0])
+
+        plt.plot(single)
+        plt.xlabel('Days into the Future')
+        plt.ylabel('Adjusted Closing Price')
+        title = "Single Set of Simulations for Adjusted Closing Prices"
+        plt.title(title)
+
+        # Multiple Future Price Subplot #####################################################
+        plt.subplot(2,2,4)
+
+        plt.plot(self.monte_sims)
+        plt.xlabel('Days into the Future')
+        plt.ylabel('Adjusted Closing Price')
+        title = "Monte Carlo Simulations for Adjusted Closing Prices"
+        plt.title(title)
+
+        # PDF Fit Subplot ###################################################################
+        plt.subplot(2,2,2)
+
         # Histogram for the price frequencies, number of bins can be adjusted
-        plt.figure(figsize=(10, 6))
         plt.hist(self.monte_sims[1], bins=10, density=True)
 
-        # simulation mean and standard deviation values
-        sim_mu, sim_sig = norm.fit(self.monte_sims[1])
-
         # Probability Density Function
+        sim_mu, sim_sig = norm.fit(self.monte_sims[1]) # Simulation mean and standard deviation values
         xmin, xmax = plt.xlim() # set the xmin and xmax along the x-axis for the pdf
         x = np.linspace(xmin, xmax)
         p = norm.pdf(x, sim_mu, sim_sig)
@@ -83,6 +117,18 @@ class Monte:
         plt.plot(x, p, 'k') # normal distribution fit
         plt.xlabel('Adjusted Closing Price')
         plt.ylabel('Probability Density')
-        title = "Histogram for 100 Simulations of Adjusted Closing Price 1 Day into the Future\nPDF fit results: mu = %.4f,  sigma = %.4f" % (sim_mu, sim_sig)
+        title = "Histogram for Simulations of Adjusted Closing Price 1 Day into the Future\nPDF fit results: mu = %.4f,  sigma = %.4f" % (sim_mu, sim_sig)
         plt.title(title)
-        plt.show()
+
+        # Save the figure to HTML string ##################################################
+        plt.tight_layout()
+        fig = plt.gcf()
+        
+        #mpld3.save_json(fig, 'plots.json') # saves to json file
+
+        html_str = mpld3.fig_to_html(fig)
+        #html_file = open("plots.html","w") # writes string to html file
+        #html_file.write(html_str)
+        #html_file.close()
+
+        return html_str
