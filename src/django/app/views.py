@@ -2,14 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import Http404
 from datetime import datetime, timedelta
-
-
 import http.client
 import json #to parse finance API
-from django.db import connection #access to default database in monte_project/settings.py
-
-
-
 # Create your views here.
 
 def home (request):
@@ -29,7 +23,7 @@ def simulate (request, stockSymbol):
 
     conn.request("GET", f'/stock/v2/get-statistics?symbol={stockSymbol}&region=US', headers=headers)
     res = conn.getresponse()
-    
+
     try:
         data = json.loads(res.read().decode("utf-8"))
     except:
@@ -40,22 +34,22 @@ def simulate (request, stockSymbol):
     stockInfo['symbol'] = stockSymbol
     stockInfo['name'] = data["price"]["longName"]
     stockInfo['change'] = round(data["price"]["regularMarketChangePercent"]["raw"] * 100, 2)
-  
+
 
 
     #find all comments for the stock that was clicked on
-    cursor = connection.cursor()
-    cursor.execute('SELECT * FROM comments WHERE Ticker = (%s)', (stockInfo['symbol'],))
-    comments = cursor.fetchall()
+    #cursor = connection.cursor()
+    #cursor.execute('SELECT * FROM comments WHERE Ticker = (%s)', (stockInfo['symbol'],))
+    #comments = cursor.fetchall()
 
     #gather all information about each comment
-    i = 0
-    for comment in comments:
-        commentInfo[i] = {}
-        commentInfo[i]["user"] = comment[0]
-        commentInfo[i]["date"] = comment[2]
-        commentInfo[i]["content"] = comment[3]
-        i += 1
+    #i = 0
+    #for comment in comments:
+        #commentInfo[i] = {}
+        #commentInfo[i]["user"] = comment[0]
+        #commentInfo[i]["date"] = comment[2]
+        #commentInfo[i]["content"] = comment[3]
+        #i += 1
     #print(comments)
     dateInfo = {}
     dateInfo["max"] = datetime.today().strftime('%Y-%m-%d')
