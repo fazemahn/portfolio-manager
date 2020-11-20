@@ -23,19 +23,25 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
             <div class="container">
-                <a class="navbar-brand mr-4" href="/">Monte Project</a>
+                <a class="navbar-brand mr-4" href="{% url 'app-home' %}">Monte Project</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <div class="navbar-nav mr-auto">
-                        <a class="nav-item nav-link" href="{% url 'app-home' %}">Home</a>
-                        <a class="nav-item nav-link" href="{% url 'app-favourites' %}">Favourites</a>
+                        <!-- <a class="nav-item nav-link" href="{% url 'app-home' %}">Home</a> -->
                     </div>
                     <!-- Navbar Right Side -->
                     <div class="navbar-nav">
-                        <a class="nav-item nav-link" href="#">Login</a>
-                        <a class="nav-item nav-link" href="#">Register</a>
+                        {% block loginNav %}
+                        {% if user.is_authenticated %}
+                        <a class="nav-item nav-link" href="#">Hi, {{ user.username }}</a>
+                        <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                        {% else %}
+                        <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                        {% endif %}
+                        {% endblock loginNav %}
+                        
                     </div>
                 </div>
             </div>
@@ -56,6 +62,9 @@
 
                 {% endblock content %}
             </div>
+            {% block sidepanels %}
+            {% if user.is_authenticated %}
+            
             <div class="col-md-4">
                 <div class="content-section">
                     <h3>Favourites</h3>
@@ -80,6 +89,8 @@
                     </p>
                 </div>
             </div>
+            {% endif %}
+            {% endblock sidepanels %}
         </div>
     </main>
 
