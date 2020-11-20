@@ -63,10 +63,10 @@ class Monte:
 
     def plot(self):
         """
-        TO DO: Output to JSON to be passed to the front-end for presentation.
-               Change output plots to whatever is desired from the front-end.
+        Function that sends
 
-        Function that plots the output for the end user. Histogram with a PDF fit is a placeholder.
+        :returns: html_str which is a string that contains the graphical output for the matplotlib plots
+        :rtype: str
         """
         # Creating the fig object for the matplotlib canvas
         fig, axs = plt.subplots(2, 2, figsize = (16,10))
