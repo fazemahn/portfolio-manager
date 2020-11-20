@@ -3,10 +3,9 @@
   {% block stockInfo %}
     <div class="d-inline">
         <h1 class="d-inline-block">{{stockInfo.name}} </h1>
-        <h1 class="fa fa-star text-warning d-inline-block"></h1>
+        <h2 class="d-inline-block"><a href="#" class="fa fa-star cur-pointer text-warning"></a></h2>
     </div>
     <br/>
-
     <div class="d-inline">
         <h3 class="d-inline-block">{{stockInfo.symbol}} </h3>
         <h3 class="{% if stockInfo.change > 0 %}text-success{% elif stockInfo.change < 0 %}text-danger{% endif %} d-inline-block">({{stockInfo.change}}%)</h3>
@@ -16,6 +15,43 @@
     <div class="content-section">
         <div style="height: 500px"></div>
     </div>
+    <form method="GET" id="simForm">
+      <div class="row">
+        <div class="col-md-6 mt-4">
+          <label for="sim_amount" class="h6">Number of Simulations</label>
+          <div class="input-group">
+            <input required class="form-control" type="number" name="sim_amount">
+          </div>
+        </div>
+        <div class="col-md-6 mt-4">
+          <label for="time_steps" class="h6">Steps Into the Future</label>
+          <div class="input-group">
+            <input required class="form-control" type="number" name="time_steps">
+          </div>
+        </div>   
+      </div>
+      <div class="row">
+        <div class="col-md-6 mt-4">
+          <label for="start" class="h6">Analysis Start Date</label>
+          <div class="input-group">
+            <input required type="date" class="form-control" name="start" value="{{ dateInfo.default }}" min="{{ dateInfo.min }}" max="{{ dateInfo.max }}">
+          </div>
+        </div>
+        <div class="col-md-6 mt-4">
+          <label for="end" class="h6">Analysis End Date</label>
+          <div class="input-group">
+            <input required type="date" class="form-control" name="end" value="{{ dateInfo.max }}" min="{{ dateInfo.min }}" max="{{ dateInfo.max }}">
+          </div>
+        </div>
+      </div> 
+      <div class="row">
+        <div class="col-md-6 mt-4">
+            <button class="btn btn-success" type="submit">Go <i class="fa fa-arrow-right"></i></button>
+        </div>
+      </div> 
+      
+    </form>
+    <br>
     <hr/>
     <h1>Comments</h1>
     {% block commentInfo %}
@@ -31,5 +67,20 @@
         </article>
       {% endfor %}
     {% endblock commentInfo %}
-
 {% endblock content %}
+
+{% block scripts %}
+<script>
+  $("#simForm").submit(function() {
+    var params = $('#simForm').serialize();
+    $.get("{% url 'api-simulate' %}", params)
+    .done(function (data) {
+      console.log(data);
+    })
+    .fail(function (data) {
+      console.log("An error occurred")
+    });
+    return false;
+  })
+</script>
+{% endblock scripts %}
