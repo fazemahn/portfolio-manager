@@ -4,9 +4,10 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Stock(models.Model):
     name = models.CharField(max_length=5)
-    value = models.IntegerField()
+    ticker= models.CharField(max_length=10)
     def __str__(self):
-        return "%s" % self.name
+        return "%s" % self.ticker
+
 class Trader (models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     favorites = models.ManyToManyField(Stock)
@@ -19,5 +20,3 @@ class Comment(models.Model):
     about = models.ForeignKey(Stock, on_delete=models.CASCADE)
     def __str__(self):
         return "%s on %s" % (self.posted_by, self.about)
-
-
