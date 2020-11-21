@@ -54,6 +54,17 @@
     <br>
     <hr/>
     <h1>Comments</h1>
+    {% if user.is_authenticated %}
+      <form method="POST">
+        <textarea class="mt-4 textbox-input" placeholder="Write a comment..."></textarea>
+        <div class="submit-bar">
+          <button>Submit</button>
+        </div>
+    </form>
+    <br>
+    <hr/>
+    {% endif %}
+    
     {% block commentInfo %}
       {% for key, comment in commentInfo.items %}
         <article class="media content-section">

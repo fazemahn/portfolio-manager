@@ -1,6 +1,6 @@
 {% extends "app/base.html" %}
 {% block content %}
-{% if user.is_authenticated %}
+
     <h1>Search</h1>
     <form method="POST" action="{% url 'app-search' %}">{% csrf_token %}
         <div class="input-group mb-3">
@@ -10,8 +10,7 @@
             </div>
         </div>
     </form>
-{% else %}
-{% endif %}
+
 {% block args %}
 {% endblock args %}
 {% endblock content %}
