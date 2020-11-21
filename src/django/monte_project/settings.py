@@ -80,7 +80,6 @@ DATABASES = {
         'NAME': 'monte_carlo',
         'USER': 'root',
         'PASSWORD': 'root',
-
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
@@ -126,3 +125,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = 'app-home'
 LOGOUT_REDIRECT_URL = 'app-home'
+
