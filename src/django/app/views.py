@@ -9,15 +9,19 @@ import json #to parse finance API
 # Create your views here.
 
 def home (request):
+    """
+    """
+
     return render(request, 'app/home.html')
 
 def favourites (request):
+    """
+    """
     return render(request, 'app/favourites.html')
 
 def simulate (request, stockSymbol):
-    
-
-    
+    """
+    """
 
     conn = http.client.HTTPSConnection("apidojo-yahoo-finance-v1.p.rapidapi.com")
     #api info
@@ -69,6 +73,9 @@ def simulate (request, stockSymbol):
     return render(request, 'app/simulate.html', {'stockInfo':stockInfo, 'commentInfo':commentInfo, 'dateInfo': dateInfo})
 
 def searchName(request):
+    """
+    """
+    
     args = {}
     if request.method == "POST":
         req = request.POST.get('searchBar')
