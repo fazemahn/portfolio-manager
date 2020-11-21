@@ -49,20 +49,20 @@
             <button class="btn btn-success" type="submit">Go <i class="fa fa-arrow-right"></i></button>
         </div>
       </div> 
-      
     </form>
     <br>
     <hr/>
     <h1>Comments</h1>
     {% if user.is_authenticated %}
       <form method="POST">
-        <textarea class="mt-4 textbox-input" placeholder="Write a comment..."></textarea>
+        {% csrf_token %}
+        <textarea required class="mt-4 textbox-input" name="comment_body" placeholder="Write a comment..."></textarea>
         <div class="submit-bar">
           <button>Submit</button>
         </div>
-    </form>
-    <br>
-    <hr/>
+      </form>
+      <br>
+      <hr/>
     {% endif %}
     
     {% block commentInfo %}
