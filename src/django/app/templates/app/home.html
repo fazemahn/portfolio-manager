@@ -1,17 +1,16 @@
 {% extends "app/base.html" %}
 {% block content %}
-{% if user.is_authenticated %}
+
     <h1>Search</h1>
     <form method="POST" action="{% url 'app-search' %}">{% csrf_token %}
         <div class="input-group mb-3">
             <input type="text" name="searchBar" class="form-control" placeholder="Search for a stock by name or ticker" aria-label="Recipient's username" aria-describedby="basic-addon2">
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button"><i class="fa fa-search"></i></button>
+                <button class="btn btn-outline-secondary"><i class="fa fa-search"></i></button>
             </div>
         </div>
     </form>
-{% else %}
-{% endif %}
+
 {% block args %}
 {% endblock args %}
 {% endblock content %}

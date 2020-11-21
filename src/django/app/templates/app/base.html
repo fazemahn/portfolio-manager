@@ -63,9 +63,8 @@
                 {% endblock content %}
             </div>
             {% block sidepanels %}
-            {% if user.is_authenticated %}
-            
             <div class="col-md-4">
+            {% if user.is_authenticated %}
                 <div class="content-section">
                     <h3>Favourites</h3>
                     <p class='text-muted'>
@@ -77,6 +76,7 @@
                         </ul>
                     </p>
                 </div>
+                {% endif %}
                 <div class="content-section">
                     <h3>Most Popular</h3>
                     <p class='text-muted'>
@@ -89,7 +89,7 @@
                     </p>
                 </div>
             </div>
-            {% endif %}
+            
             {% endblock sidepanels %}
         </div>
     </main>

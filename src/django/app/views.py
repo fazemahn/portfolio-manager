@@ -15,6 +15,9 @@ def favourites (request):
     return render(request, 'app/favourites.html')
 
 def simulate (request, stockSymbol):
+    
+
+    
 
     conn = http.client.HTTPSConnection("apidojo-yahoo-finance-v1.p.rapidapi.com")
     #api info
@@ -37,6 +40,14 @@ def simulate (request, stockSymbol):
     stockInfo['name'] = data["price"]["longName"]
     stockInfo['change'] = round(data["price"]["regularMarketChangePercent"]["raw"] * 100, 2)
 
+    stockRecord = Stock.objects.filter(ticker=stockSymbol).first()
+    if not stockRecord:
+        stockRecord = Stock.objects.create(ticker=stockSymbol, name=stockInfo['name'])
+
+    if request.method == "POST":
+        print(request.user.username)
+        Comment.objects.create(text=request.POST.get('comment_body'), posted_by=request.user, about=stockRecord)
+
     #find all comments for the stock that was clicked on
     comments = Comment.objects.filter(about__ticker=stockSymbol)
 
@@ -49,7 +60,6 @@ def simulate (request, stockSymbol):
         commentInfo[i]["date"] = str(comment.posted_on)
         commentInfo[i]["content"] = comment.text
         i += 1
-  
     dateInfo = {}
     dateInfo["max"] = datetime.today().strftime('%Y-%m-%d')
     dateInfo["default"] = (datetime.today() - timedelta(days=31)).strftime('%Y-%m-%d')
