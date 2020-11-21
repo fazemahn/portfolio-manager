@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import Http404
 from datetime import datetime, timedelta
+
 from app.models import Comment, Stock, User, Trader
 import http.client
 import json #to parse finance API
-
 # Create your views here.
 
 def home (request):
@@ -38,15 +38,10 @@ def simulate (request, stockSymbol):
     stockInfo['change'] = round(data["price"]["regularMarketChangePercent"]["raw"] * 100, 2)
 
     #find all comments for the stock that was clicked on
-
-    #c = User.objects.filter(commentaboutname=l)
     comments = Comment.objects.filter(about__ticker=stockSymbol)
 
-    #cursor = connection.cursor()
-    #cursor.execute('SELECT * FROM comments WHERE Ticker = (%s)', (stockInfo['symbol'],))
-    #comments = cursor.fetchall()
-
     #gather all information about each comment
+
     i = 0
     for comment in comments:
         commentInfo[i] = {}
@@ -54,7 +49,7 @@ def simulate (request, stockSymbol):
         commentInfo[i]["date"] = str(comment.posted_on)
         commentInfo[i]["content"] = comment.text
         i += 1
-    #print(comments)
+  
     dateInfo = {}
     dateInfo["max"] = datetime.today().strftime('%Y-%m-%d')
     dateInfo["default"] = (datetime.today() - timedelta(days=31)).strftime('%Y-%m-%d')

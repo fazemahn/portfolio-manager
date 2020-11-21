@@ -7,6 +7,7 @@ class Stock(models.Model):
     ticker= models.CharField(max_length=10)
     def __str__(self):
         return "%s" % self.ticker
+
 class Trader (models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     favorites = models.ManyToManyField(Stock)
