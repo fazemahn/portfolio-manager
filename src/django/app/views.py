@@ -8,6 +8,12 @@ import http.client
 import json #to parse finance API
 # Create your views here.
 
+def addfav(request, stockSymbol):
+    stock = Stock.objects.filter(ticker=stockSymbol).first()
+    curruser = request.user
+    curruser.trader.favorites.add(stock)
+    print("Added To Favorites")
+    return HttpResponse("Favorites are Added")
 def home (request):
     """
     """
@@ -99,10 +105,10 @@ def searchName(request):
         #json that holds all results from the auto-complete search query
         data = json.loads(resBody)
         i = 0
-
         #loop through the quotes dictionary to find relevant information
         #and save them as dictionaries into args
         #each dictionary in args is a different stock
+        #also save all results into stocks table. TO DO
         for exchange in data['quotes']:
             if exchange['quoteType'] == "EQUITY": # Only interested in equities (stocks)
                 args[i] = {}
@@ -116,6 +122,9 @@ def searchName(request):
                         args[i]["name"] = "Name Unavailable"
                 args[i]["symbol"] = exchange['symbol']
                 args[i]["type"] = exchange['quoteType']
+                # print(args[i]["name"])
+                # s = Stock(name=args[i]["name"], ticker=args[i]["symbol"])
+                # s.save()
                 i += 1
 
     return render(request, 'app/searchForm.html', {'args':args})
