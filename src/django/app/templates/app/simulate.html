@@ -1,16 +1,16 @@
 {% extends "app/base.html" %}
 {% block content %}
-  {% block stockInfo %}
     <div class="d-inline">
         <h1 class="d-inline-block">{{stockInfo.name}} </h1>
-        <h2 class="d-inline-block"><a onclick="fn()" class="fa fa-star cur-pointer text-warning"></a></h2>
+        {% if user.is_authenticated %}
+        <h2 class="d-inline-block"><a onclick="fn('{{stockInfo.symbol}}', '{{stockInfo.name}}')" class="{% if stockInfo.isFavorite %} fa {% else %} far {% endif %} fa-star cur-pointer text-warning"></a></h2>
+        {% endif %}
     </div>
     <br/>
     <div class="d-inline">
         <h3 class="d-inline-block">{{stockInfo.symbol}} </h3>
         <h3 class="{% if stockInfo.change > 0 %}text-success{% elif stockInfo.change < 0 %}text-danger{% endif %} d-inline-block">({{stockInfo.change}}%)</h3>
     </div>
-  {% endblock stockInfo %}
     <hr/>
     <div class="content-section">
         <div style="height: 500px"></div>
@@ -64,20 +64,17 @@
       <br>
       <hr/>
     {% endif %}
-    
-    {% block commentInfo %}
-      {% for key, comment in commentInfo.items %}
-        <article class="media content-section">
-            <div class="media-body">
-                <div class="article-metadata">
-                    <small>{{comment.user}}</small>
-                    <small class="text-muted">{{comment.date}}</small>
-                </div>
-                <p class="article-content mt-3">{{comment.content}}</p>
-            </div>
-        </article>
-      {% endfor %}
-    {% endblock commentInfo %}
+    {% for key, comment in commentInfo.items %}
+      <article class="media content-section">
+          <div class="media-body">
+              <div class="article-metadata">
+                  <small>{{comment.user}}</small>
+                  <small class="text-muted">{{comment.date}}</small>
+              </div>
+              <p class="article-content mt-3">{{comment.content}}</p>
+          </div>
+      </article>
+    {% endfor %}
 {% endblock content %}
 
 {% block scripts %}
