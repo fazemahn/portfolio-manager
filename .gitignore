@@ -11,6 +11,7 @@ connections.json
 
 # Distribution / packaging
 .Python
+monte_project/settings.py
 build/
 develop-eggs/
 dist/
