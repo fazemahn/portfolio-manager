@@ -1,24 +1,21 @@
 {% extends "app/home.html" %}
-
-{% block args %}
-
+{% block results %}
 <div>
-  {% for key, info in args.items%}
+  {% for key, info in results.items%}
     <article class="media content-section">
         <div class="media-body">
             <div class="article-metadata">
-                <a class="mr-2" href="/simulate/{{info.symbol}}">{{info.symbol}}</a>
+                <a class="mr-2" href="{% url 'app-simulate' info.symbol %}">{{info.symbol}}</a>
                 <a class="float-right fa fa-star text-warning cur-pointer"></a>
             </div>
 
             <!--hidden input and the button hold values that are passed to the simulate function-->
             
-            <h4><a class="article-title cur-pointer" href="/simulate/{{info.symbol}}">{{info.name}} {{info.exchange}}</a></h4>
+            <h4><a class="article-title cur-pointer" href="{% url 'app-simulate' info.symbol %}">{{info.name}} {{info.exchange}}</a></h4>
 
 
         </div>
     </article>
-
   {% endfor %}
 </div>
-{% endblock args %}
+{% endblock results %}

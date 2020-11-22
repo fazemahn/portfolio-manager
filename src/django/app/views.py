@@ -3,26 +3,67 @@ from django.http import HttpResponse
 from django.http import Http404
 from datetime import datetime, timedelta
 
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
+from django.views import generic
+
+
 from app.models import Comment, Stock, User, Trader
 import http.client
 import json #to parse finance API
 # Create your views here.
 
+class SignUpView(generic.CreateView):
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+    template_name = 'registration/signup.html'
+
+def remcom(request, commID):
+    Comment.objects.get(pk=commID).delete()
+    return HttpResponse("Comment Removed")
+
+def addfav(request, stockSymbol):
+    # need to check if already in the list before increasing popularity
+    # not done for now.
+    stock = Stock.objects.filter(ticker=stockSymbol).first()
+    if request.user.is_authenticated:
+        request.user.trader.favorites.add(stock)
+    stock.popularity += 1
+    stock.save()
+    return HttpResponse("Favorites are Added")
+
+def remfav(request, stockSymbol):
+    # need to check if already in the list before increasing popularity
+    # not done for now.
+    stock = Stock.objects.filter(ticker=stockSymbol).first()
+    curruser = request.user
+    curruser.trader.favorites.remove(stock)
+    stock.popularity -= 1
+    stock.save()
+    
+    return HttpResponse("Favorites are Added")
+
 def home (request):
-    """
-    """
-
-    return render(request, 'app/home.html')
-
+    allstocks = Stock.objects.order_by('popularity').reverse()[:5]
+    if request.user.is_authenticated:
+        try:
+            request.user.trader
+        except:
+            t = Trader.objects.create(user_id=request.user.id)
+            t.save()
+            favInfo = t.favorites.all()
+            return render(request, 'app/home.html',{'topstocks': allstocks, 'sidepanels': favInfo})
+        favInfo = request.user.trader.favorites.all()
+        return render(request, 'app/home.html',{'topstocks': allstocks, 'sidepanels': favInfo})
+    else:
+        return render(request, 'app/home.html',{'topstocks': allstocks})
 def favourites (request):
-    """
-    """
-    return render(request, 'app/favourites.html')
+    if request.user.is_authenticated:
+        comments = Comment.objects.filter(posted_by = request.user)
+        favInfo = request.user.trader.favorites.all()
+        return render(request, 'app/favourites.html', {'content': favInfo, 'comments': comments})
 
 def simulate (request, stockSymbol):
-    """
-    """
-
     conn = http.client.HTTPSConnection("apidojo-yahoo-finance-v1.p.rapidapi.com")
     #api info
     headers = {
@@ -37,7 +78,6 @@ def simulate (request, stockSymbol):
         data = json.loads(res.read().decode("utf-8"))
     except:
         return render(request, 'app/error404.html')
-
     stockInfo = {}
     commentInfo = {}
     stockInfo['symbol'] = stockSymbol
@@ -68,9 +108,9 @@ def simulate (request, stockSymbol):
     dateInfo["max"] = datetime.today().strftime('%Y-%m-%d')
     dateInfo["default"] = (datetime.today() - timedelta(days=31)).strftime('%Y-%m-%d')
     dateInfo["min"] = (datetime.today() - timedelta(days=365)).strftime('%Y-%m-%d')
-
-
-    return render(request, 'app/simulate.html', {'stockInfo':stockInfo, 'commentInfo':commentInfo, 'dateInfo': dateInfo})
+    favInfo = request.user.trader.favorites.all()
+    allstocks = Stock.objects.order_by('popularity').reverse()[:5]
+    return render(request, 'app/simulate.html', {'stockInfo':stockInfo, 'commentInfo':commentInfo, 'dateInfo': dateInfo, 'sidepanels': favInfo, 'topstocks': allstocks})
 
 def searchName(request):
     """
@@ -94,10 +134,10 @@ def searchName(request):
         #json that holds all results from the auto-complete search query
         data = json.loads(resBody)
         i = 0
-
         #loop through the quotes dictionary to find relevant information
         #and save them as dictionaries into args
         #each dictionary in args is a different stock
+        #also save all results into stocks table. TO DO
         for exchange in data['quotes']:
             if exchange['quoteType'] == "EQUITY": # Only interested in equities (stocks)
                 args[i] = {}
@@ -111,6 +151,12 @@ def searchName(request):
                         args[i]["name"] = "Name Unavailable"
                 args[i]["symbol"] = exchange['symbol']
                 args[i]["type"] = exchange['quoteType']
+                # print(args[i]["name"])
+                # s = Stock(name=args[i]["name"], ticker=args[i]["symbol"])
+                # s.save()
                 i += 1
-
-    return render(request, 'app/searchForm.html', {'args':args})
+        favInfo = {}
+        if request.user.is_authenticated:
+            favInfo = request.user.trader.favorites.all()
+        allstocks = Stock.objects.order_by('popularity').reverse()[:5]
+    return render(request, 'app/searchForm.html', {'results': args, 'sidepanels': favInfo, 'topstocks': allstocks})

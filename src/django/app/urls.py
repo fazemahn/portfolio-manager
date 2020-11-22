@@ -8,6 +8,9 @@ urlpatterns = [
     path ('search/', views.searchName, name = 'app-search'),
     path('simulate/<str:stockSymbol>/', views.simulate, name = 'app-simulate'),
     path ('search/', views.searchName),
-    path('api/simulate', api.simulate, name = 'api-simulate')
+    path('api/simulate', api.simulate, name = 'api-simulate'),
+    path('simulate/<str:stockSymbol>/addfav/', views.addfav, name = 'addfav'),
+    path('favourites/<str:stockSymbol>/removefav', views.remfav, name = 'remfav'),
+    path('favourites/<int:commID>/removecomment', views.remcom, name= 'remcom')
 
 ]
