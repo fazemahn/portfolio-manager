@@ -1,11 +1,11 @@
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import datetime as dt
 import json
 import numpy as np
 import pandas as pd
 import pandas_datareader as pdr
-import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.use('Agg')
 import mpld3
 from scipy.stats import norm
 
