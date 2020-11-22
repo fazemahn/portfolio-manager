@@ -7,12 +7,33 @@ from app.models import Comment, Stock, User, Trader
 import http.client
 import json #to parse finance API
 # Create your views here.
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
+from django.views import generic
+
+
+class SignUpView(generic.CreateView):
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+    template_name = 'registration/signup.html'
+
+def remcom(request, commID):
+    Comment.objects.get(pk=commID).delete()
+    return HttpResponse("Comment Removed")
+
+def remfav(request, stockSymbol):
+    return HttpResponse()
+    # need to check if already in the list before increasing popularity
+    # not done for now.
 
 def addfav(request, stockSymbol, stockName):
     stock = Stock.objects.filter(ticker=stockSymbol).first()
     if not stock:
         stock = Stock.objects.create(ticker=stockSymbol, name=stockName)
     curruser = request.user
+    curruser.trader.favorites.remove(stock)
+    stock.popularity -= 1
+    stock.save()
     curruser.trader.favorites.add(stock)
     print("Added To Favorites")
     return HttpResponse("Favorites are Added")
@@ -20,12 +41,28 @@ def addfav(request, stockSymbol, stockName):
 def home (request):
     """
     """
+    allstocks = Stock.objects.order_by('popularity').reverse()[:5]
+    if request.user.is_authenticated:
+        try:
+            request.user.trader
+        except:
+            t = Trader.objects.create(user_id=request.user.id)
+            t.save()
+            favInfo = t.favorites.all()
+            return render(request, 'app/home.html',{'topstocks': allstocks, 'sidepanels': favInfo})
+        favInfo = request.user.trader.favorites.all()
+        return render(request, 'app/home.html',{'topstocks': allstocks, 'sidepanels': favInfo})
+    else:
+        return render(request, 'app/home.html',{'topstocks': allstocks})
 
-    return render(request, 'app/home.html')
 
 def favourites (request):
     """
     """
+    if request.user.is_authenticated:
+        comments = Comment.objects.filter(posted_by = request.user)
+        favInfo = request.user.trader.favorites.all()
+        return render(request, 'app/favourites.html', {'content': favInfo, 'comments': comments})
     return render(request, 'app/favourites.html')
 
 def simulate (request, stockSymbol):
@@ -55,10 +92,13 @@ def simulate (request, stockSymbol):
 
 
     stockRecord = Stock.objects.filter(ticker=stockSymbol).first()
+    favInfo = {}
     if not stockRecord:
         stockRecord = Stock.objects.create(ticker=stockSymbol, name=stockInfo['name'])
-    elif request.user.is_authenticated and request.user.trader.favorites.filter(ticker=stockSymbol).first():
-        stockInfo['isFavorite'] = True
+    elif request.user.is_authenticated:
+        favInfo = request.user.trader.favorites.all()
+        if request.user.trader.favorites.filter(ticker=stockSymbol).first():
+            stockInfo['isFavorite'] = True
         
 
     if request.method == "POST":
@@ -81,8 +121,8 @@ def simulate (request, stockSymbol):
     dateInfo["default"] = (datetime.today() - timedelta(days=31)).strftime('%Y-%m-%d')
     dateInfo["min"] = (datetime.today() - timedelta(days=365)).strftime('%Y-%m-%d')
 
-
-    return render(request, 'app/simulate.html', {'stockInfo':stockInfo, 'commentInfo':commentInfo, 'dateInfo': dateInfo})
+    allstocks = Stock.objects.order_by('popularity').reverse()[:5]
+    return render(request, 'app/simulate.html', {'stockInfo':stockInfo, 'commentInfo':commentInfo, 'dateInfo': dateInfo, 'sidepanels': favInfo, 'topstocks': allstocks})
 
 def searchName(request):
     """
@@ -124,9 +164,14 @@ def searchName(request):
                         results[symbol]['name'] = stock['shortname']
                     except:
                         results[symbol]['name'] = "Name Unavailable"
+
+        allstocks = Stock.objects.order_by('popularity').reverse()[:5]
+
         if request.user.is_authenticated:
             favorites = request.user.trader.favorites.filter(ticker__in=tickerArray)
             for favorite in favorites:
                 results[favorite.ticker]['isFavorite'] = True
-
-    return render(request, 'app/searchForm.html', {'results': results})
+            favInfo = request.user.trader.favorites.all()
+            return render(request, 'app/searchForm.html', {'results': results, 'sidepanels': favInfo, 'topstocks': allstocks})
+    
+    return render(request, 'app/searchForm.html', {'results': results, 'topstocks': allstocks})
