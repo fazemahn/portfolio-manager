@@ -29,6 +29,7 @@ class Monte:
         self.data_source = data_source
         self.data = pd.DataFrame()
         self.monte_sims = pd.DataFrame()
+        self.figure = plt.figure(figsize=(16,10))
         
     def create_DataFrame(self):
         """
@@ -122,13 +123,13 @@ class Monte:
 
         # Save the figure to HTML string ##################################################
         plt.tight_layout()
-        fig = plt.gcf()
+        self.fig = plt.gcf()
         
-        #mpld3.save_json(fig, 'plots.json') # saves to json file
-
-        html_str = mpld3.fig_to_html(fig)
-        #html_file = open("plots.html","w") # writes string to html file
-        #html_file.write(html_str)
-        #html_file.close()
+        # mpld3.save_json(fig, 'plots.json') # saves figure to json file
+        html_str = mpld3.fig_to_html(self.fig) # saves figure to string of html
 
         return html_str
+
+    def send_json():
+        plot_json = mpld3.save_json(fig, 'plots.json') # saves figure to json file
+        return False
