@@ -21,8 +21,10 @@ def favourites (request):
 
 def simulate (request, stockSymbol):
     """
+    Makes an api call to yahoo finace to gather stock informtation
+    Gathers comments from database and displays them on the page
     """
-
+    #call api and get stock related information
     conn = http.client.HTTPSConnection("apidojo-yahoo-finance-v1.p.rapidapi.com")
     #api info
     headers = {
@@ -39,19 +41,21 @@ def simulate (request, stockSymbol):
         return render(request, 'app/error404.html')
 
     stockInfo = {}
-    commentInfo = {}
     stockInfo['symbol'] = stockSymbol
     stockInfo['name'] = data["price"]["longName"]
     stockInfo['change'] = round(data["price"]["regularMarketChangePercent"]["raw"] * 100, 2)
 
+    #if the stock is not in the database, put it in
     stockRecord = Stock.objects.filter(ticker=stockSymbol).first()
     if not stockRecord:
         stockRecord = Stock.objects.create(ticker=stockSymbol, name=stockInfo['name'])
 
+    #if a user is posting a new comment, add that comment to the database
     if request.method == "POST":
         print(request.user.username)
         Comment.objects.create(text=request.POST.get('comment_body'), posted_by=request.user, about=stockRecord)
 
+    commentInfo = {}
     #find all comments for the stock that was clicked on
     comments = Comment.objects.filter(about__ticker=stockSymbol)
 
@@ -74,8 +78,9 @@ def simulate (request, stockSymbol):
 
 def searchName(request):
     """
+    Uses the autofill api query to get all results that match the users input
     """
-    
+
     args = {}
     if request.method == "POST":
         req = request.POST.get('searchBar')

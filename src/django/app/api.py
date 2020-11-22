@@ -3,9 +3,9 @@ from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import Http404
 
-from Monte import Monte
+from shared.Monte import Monte
 import datetime as dt
-import numpy as np 
+import numpy as np
 import pandas as pd
 import pandas_datareader as pdr
 import matplotlib.pyplot as plt
