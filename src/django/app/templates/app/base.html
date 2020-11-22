@@ -41,6 +41,7 @@
                         <a class="nav-item nav-link text-danger" href="{% url 'logout' %}">Logout</a>
                         {% else %}
                         <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="nav-item nav-link" href="{% url 'signup' %}">Sign Up</a>
                         {% endif %}
                         {% endblock loginNav %}
                         
@@ -64,8 +65,9 @@
 
                 {% endblock content %}
             </div>
-            {% if sidepanels %}
             <div class="col-md-4 content-selection">
+            {% if sidepanels %}
+            
                 <h3>Favorites</h3>
                 <p class='text-muted'>
                     <ul class="list-group">
@@ -74,11 +76,23 @@
                         {% endfor %}
                     </ul>
                 </p>
-            </div>
+            
+            {% endif %}
+            {% if topstocks %}
+            
+                <h3>Popular</h3>
+                <p class='text-muted'>
+                    <ul class="list-group">
+                        {% for item in topstocks %}
+                        <li class="list-group-item list-group-item-light"><a class="text-muted" href="{% url 'app-simulate' item %}">{{ item }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </p>
+            
             {% endif %}
             {% block loginpanels %}
             {% endblock loginpanels %}
-
+            </div>
         </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
@@ -95,6 +109,13 @@
             var PAGE_URL = inputs+"/removefav";
             $.get(PAGE_URL);
             alert("Removed "+inputs+" From Favorites");
+            location.reload();
+        }
+        function remcomm(data){
+            var PAGE_URL = data+"/removecomment";
+            alert(PAGE_URL);
+            $.get(PAGE_URL);
+            alert("Removed "+inputs+" From Comments");
             location.reload();
         }
     </script>

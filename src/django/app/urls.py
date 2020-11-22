@@ -11,5 +11,6 @@ urlpatterns = [
     path('api/simulate', api.simulate, name = 'api-simulate'),
     path('simulate/<str:stockSymbol>/addfav/', views.addfav, name = 'addfav'),
     path('favourites/<str:stockSymbol>/removefav', views.remfav, name = 'remfav'),
+    path('favourites/<int:commID>/removecomment', views.remcom, name= 'remcom')
 
 ]

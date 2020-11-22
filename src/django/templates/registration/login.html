@@ -1,14 +1,14 @@
 <!-- templates/registration/login.html -->
 {% extends "app/base.html" %}
 {% block loginpanels %}
-<div class="col-md-4">
-  <div class="content-section">
+
+  
       <h3>Login</h3>
       <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button class="btn-primary" type="submit">Log In</button>
       </form>
-  </div>
-</div>
+  
+
 {% endblock loginpanels %}
