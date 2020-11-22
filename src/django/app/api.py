@@ -5,8 +5,6 @@ from django.http import Http404
 import datetime as dt
 from shared.Monte import Monte
 
-import matplotlib.pyplot as plt
-import mpld3
 
 def simulate(request):
     """
