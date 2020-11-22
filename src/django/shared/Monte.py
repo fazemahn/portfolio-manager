@@ -1,4 +1,5 @@
 import datetime as dt
+import json
 import numpy as np
 import pandas as pd
 import pandas_datareader as pdr
@@ -123,13 +124,20 @@ class Monte:
 
         # Save the figure to HTML string ##################################################
         plt.tight_layout()
-        self.fig = plt.gcf()
+        self.figure = plt.gcf()
         
-        # mpld3.save_json(fig, 'plots.json') # saves figure to json file
-        html_str = mpld3.fig_to_html(self.fig) # saves figure to string of html
+        html_str = mpld3.fig_to_html(self.figure) # saves figure to string of html
 
         return html_str
 
-    def send_json():
-        plot_json = mpld3.save_json(fig, 'plots.json') # saves figure to json file
-        return False
+    def get_json(self):
+        """
+        Function that converts the figure to Python dictionary which is directly json-serializable.
+
+        :returns: plot_dict which 
+        """
+
+        plot_dict = mpld3.fig_to_dict(self.figure) # saves figure dictionary
+        plot_json = json.dumps(plot_dict, indent=4)
+
+        return plot_json

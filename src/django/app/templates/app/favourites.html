@@ -1,60 +1,33 @@
 {% extends "app/base.html" %}
 {% block content %}
     <h1>My Favourites</h1>
-    
+    {% for data in content %}
     <article class="media content-section">
         <div class="media-body">
             <div class="article-metadata">
-                <a class="mr-2" href="#">AAPL</a>
-                <small class="text-success">(1.01%)</small>
-                <a class="float-right fa fa-minus-circle text-danger"></a>
+                <a class="mr-2" href="{% url 'app-simulate' data %}">{{ data }}</a>
+                <a onclick="remstock('{{ data.ticker }}')"  href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock"></a>
             </div>
-            <h5><a class="article-title" href="#">Apple Inc.</a></h5>
+            <h5><a class="article-title" href="{% url 'app-simulate' data %}">{{ data.name }}</a></h5>
         </div>
     </article>
-    <article class="media content-section">
-        <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="#">ZM</a>
-                <small class="text-success">(2.01%)</small>
-                <a class="float-right fa fa-minus-circle text-danger"></a>
-            </div>
-            <h5><a class="article-title" href="#">Zoom Video Communications, Inc.</a></h5>
-        </div>
-    </article>
-    <article class="media content-section">
-        <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="#">TSLA</a>
-                <small class="text-danger">(0.46%)</small>
-                <a class="float-right fa fa-minus-circle text-danger"></a>
-            </div>
-            <h5><a class="article-title" href="#">Tesla, Inc.</a></h5>
-        </div>
-    </article>
-    <article class="media content-section">
-        <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="#">SNAP</a>
-                <small class="text-success">(3.26%)</small>
-                <a class="float-right fa fa-minus-circle text-danger"></a>
-            </div>
-            <h5><a class="article-title" href="#">Snap Inc.</a></h5>
-        </div>
-    </article>
+    {% endfor %}
 
     <hr/>
     <h1>Recent Activity</h1>
+    {% for data in comments %}
     <article class="media content-section">
         <div class="media-body">
             <div class="article-metadata">
-                <h3><a class="article-title" href="#">Apple Inc.</a></h3>
-                <small>khalidh</small>
-                <small class="text-muted">posted Jan. 02, 2020</small>
+                <h3><a class="article-title" href="#">{{ data.about.name }}</a></h3>
+                <a onclick="remcomm('{{ data.id }}')"" href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock"></a>
+                <small>{{ data.posted_by }}</small>
+                <small class="text-muted">posted {{ data.posted_on }}</small>
             </div>
 
-            <p class="article-content mt-3">This is a pretty good stock guys!</p>
+            <p class="article-content mt-3">{{ data.text }}</p>
         </div>
     </article>
+    {% endfor %}
 
 {% endblock content %}
