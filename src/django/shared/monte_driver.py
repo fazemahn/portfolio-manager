@@ -1,10 +1,11 @@
 from Monte import Monte
 import datetime as dt
 
+"""
+Example to show how a Monte object can be created with user inputs and made 
+to output the plots to an html and json file.
+"""
 
-"""
-TO DO: Take proper front-end inputs to generate the user's desired output plot(s).
-"""
 # Placeholder example to show Monte object method implementation
 mon = Monte('AMD', 100, 30, start=dt.datetime(2018,1,1), end=dt.datetime.now(), data_source='yahoo')
 mon.create_DataFrame()

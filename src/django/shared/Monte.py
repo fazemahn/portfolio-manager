@@ -136,8 +136,8 @@ class Monte:
 
         :returns: plot_dict which 
         """
-
+        
         plot_dict = mpld3.fig_to_dict(self.figure) # saves figure dictionary
-        plot_json = json.dumps(plot_dict, indent=4)
+        plot_json = json.dumps(plot_dict, indent=4) # converts dictionary to json
 
         return plot_json
