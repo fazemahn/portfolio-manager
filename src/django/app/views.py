@@ -8,8 +8,10 @@ import http.client
 import json #to parse finance API
 # Create your views here.
 
-def addfav(request, stockSymbol):
+def addfav(request, stockSymbol, stockName):
     stock = Stock.objects.filter(ticker=stockSymbol).first()
+    if not stock:
+        stock = Stock.objects.create(ticker=stockSymbol, name=stockName)
     curruser = request.user
     curruser.trader.favorites.add(stock)
     print("Added To Favorites")
@@ -55,7 +57,7 @@ def simulate (request, stockSymbol):
     stockRecord = Stock.objects.filter(ticker=stockSymbol).first()
     if not stockRecord:
         stockRecord = Stock.objects.create(ticker=stockSymbol, name=stockInfo['name'])
-    elif request.user.is_authenticated and request.user.trader.favorites.get(ticker=stockSymbol):
+    elif request.user.is_authenticated and request.user.trader.favorites.filter(ticker=stockSymbol).first():
         stockInfo['isFavorite'] = True
         
 

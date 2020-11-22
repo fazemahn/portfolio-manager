@@ -7,7 +7,7 @@
             <div class="article-metadata">
                 <a class="mr-2" href="{% url 'app-simulate' key %}">{{key}}</a>
                 {% if user.is_authenticated %}
-                  <a class="float-right text-warning fa-star {% if val.isFavorite %} fa {% else %} far {% endif %} cur-pointer"></a>
+                  <a onclick="fn('{{key}}', '{{val.name}}')" class="float-right text-warning fa-star {% if val.isFavorite %} fa {% else %} far {% endif %} cur-pointer"></a>
                 {% endif %}
             </div>
 

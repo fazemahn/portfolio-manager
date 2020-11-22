@@ -2,7 +2,7 @@
 {% block content %}
     <div class="d-inline">
         <h1 class="d-inline-block">{{stockInfo.name}} </h1>
-        <h2 class="d-inline-block"><a onclick="fn()" class="{% if stockInfo.isFavorite %} fa {% else %} far {% endif %} fa-star cur-pointer text-warning"></a></h2>
+        <h2 class="d-inline-block"><a onclick="fn('{{stockInfo.symbol}}', '{{stockInfo.name}}')" class="{% if stockInfo.isFavorite %} fa {% else %} far {% endif %} fa-star cur-pointer text-warning"></a></h2>
     </div>
     <br/>
     <div class="d-inline">
