@@ -9,26 +9,39 @@ import json #to parse finance API
 # Create your views here.
 
 def addfav(request, stockSymbol):
+    # need to check if already in the list before increasing popularity
+    # not done for now.
+    stock = Stock.objects.filter(ticker=stockSymbol).first()
+    print (stock)
+    if request.user.is_authenticated:
+        request.user.trader.favorites.add(stock)
+    stock.popularity += 1
+    stock.save()
+    return HttpResponse("Favorites are Added")
+
+def remfav(request, stockSymbol):
+    # need to check if already in the list before increasing popularity
+    # not done for now.
     stock = Stock.objects.filter(ticker=stockSymbol).first()
     curruser = request.user
-    curruser.trader.favorites.add(stock)
-    print("Added To Favorites")
+    curruser.trader.favorites.remove(stock)
+    stock.popularity -= 1
+    stock.save()
+    
     return HttpResponse("Favorites are Added")
+
 def home (request):
-    """
-    """
-
-    return render(request, 'app/home.html')
-
+    if request.user.is_authenticated:
+        favInfo = request.user.trader.favorites.all()
+        return render(request, 'app/home.html', {'sidepanels':favInfo})
+    else:
+        return render(request, 'app/home.html')
 def favourites (request):
-    """
-    """
-    return render(request, 'app/favourites.html')
+    if request.user.is_authenticated:
+        favInfo = request.user.trader.favorites.all()
+    return render(request, 'app/favourites.html', {'content': favInfo})
 
 def simulate (request, stockSymbol):
-    """
-    """
-
     conn = http.client.HTTPSConnection("apidojo-yahoo-finance-v1.p.rapidapi.com")
     #api info
     headers = {
@@ -43,7 +56,6 @@ def simulate (request, stockSymbol):
         data = json.loads(res.read().decode("utf-8"))
     except:
         return render(request, 'app/error404.html')
-
     stockInfo = {}
     commentInfo = {}
     stockInfo['symbol'] = stockSymbol
@@ -74,9 +86,8 @@ def simulate (request, stockSymbol):
     dateInfo["max"] = datetime.today().strftime('%Y-%m-%d')
     dateInfo["default"] = (datetime.today() - timedelta(days=31)).strftime('%Y-%m-%d')
     dateInfo["min"] = (datetime.today() - timedelta(days=365)).strftime('%Y-%m-%d')
-
-
-    return render(request, 'app/simulate.html', {'stockInfo':stockInfo, 'commentInfo':commentInfo, 'dateInfo': dateInfo})
+    favInfo = request.user.trader.favorites.all()
+    return render(request, 'app/simulate.html', {'stockInfo':stockInfo, 'commentInfo':commentInfo, 'dateInfo': dateInfo, 'sidepanels': favInfo})
 
 def searchName(request):
     """
@@ -121,5 +132,7 @@ def searchName(request):
                 # s = Stock(name=args[i]["name"], ticker=args[i]["symbol"])
                 # s.save()
                 i += 1
-
-    return render(request, 'app/searchForm.html', {'args':args})
+        favInfo = {}
+        if request.user.is_authenticated:
+            favInfo = request.user.trader.favorites.all()
+    return render(request, 'app/searchForm.html', {'results': args, 'sidepanels': favInfo})

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Stock(models.Model):
     name = models.CharField(max_length=75)
     ticker= models.CharField(max_length=10, unique=True)
+    popularity = models.IntegerField(default=0)
     def __str__(self):
         return "%s" % self.ticker
 

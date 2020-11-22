@@ -1,47 +1,18 @@
 {% extends "app/base.html" %}
 {% block content %}
     <h1>My Favourites</h1>
-    
+    {% for data in content %}
     <article class="media content-section">
         <div class="media-body">
             <div class="article-metadata">
-                <a class="mr-2" href="#">AAPL</a>
+                <a class="mr-2" href="#">{{ data }}</a>
                 <small class="text-success">(1.01%)</small>
-                <a class="float-right fa fa-minus-circle text-danger"></a>
+                <a onclick="remstock('{{ data.ticker }}')"" href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock"></a>
             </div>
-            <h5><a class="article-title" href="#">Apple Inc.</a></h5>
+            <h5><a class="article-title" href="#">{{ data.name }}</a></h5>
         </div>
     </article>
-    <article class="media content-section">
-        <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="#">ZM</a>
-                <small class="text-success">(2.01%)</small>
-                <a class="float-right fa fa-minus-circle text-danger"></a>
-            </div>
-            <h5><a class="article-title" href="#">Zoom Video Communications, Inc.</a></h5>
-        </div>
-    </article>
-    <article class="media content-section">
-        <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="#">TSLA</a>
-                <small class="text-danger">(0.46%)</small>
-                <a class="float-right fa fa-minus-circle text-danger"></a>
-            </div>
-            <h5><a class="article-title" href="#">Tesla, Inc.</a></h5>
-        </div>
-    </article>
-    <article class="media content-section">
-        <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="#">SNAP</a>
-                <small class="text-success">(3.26%)</small>
-                <a class="float-right fa fa-minus-circle text-danger"></a>
-            </div>
-            <h5><a class="article-title" href="#">Snap Inc.</a></h5>
-        </div>
-    </article>
+    {% endfor %}
 
     <hr/>
     <h1>Recent Activity</h1>

@@ -16,12 +16,7 @@
         Monte Project
         {% endif %}
     </title>
-    <script>
-        function fn(){
-            $.get('addfav/');
-            alert("hi");
-        }
-    </script>
+   
     <meta name="author" content="Graem Sheppard">
 </head>
 
@@ -42,7 +37,8 @@
                         {% block loginNav %}
                         {% if user.is_authenticated %}
                         <a class="nav-item nav-link" href="#">Hi, {{ user.username }}</a>
-                        <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                        <a class="nav-item nav-link" href="{% url 'app-favourites' %}">Edit Profile</a>
+                        <a class="nav-item nav-link text-danger" href="{% url 'logout' %}">Logout</a>
                         {% else %}
                         <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
                         {% endif %}
@@ -68,44 +64,41 @@
 
                 {% endblock content %}
             </div>
-            {% block sidepanels %}
-            <div class="col-md-4">
-            {% if user.is_authenticated %}
-                <div class="content-section">
-                    <h3>Favourites</h3>
-                    <p class='text-muted'>
-                        <ul class="list-group">
-                            <li class="list-group-item list-group-item-light">AAPL</li>
-                            <li class="list-group-item list-group-item-light">TSLA</li>
-                            <li class="list-group-item list-group-item-light">ZM</li>
-                            <li class="list-group-item list-group-item-light">SNAP</li>
-                        </ul>
-                    </p>
-                </div>
-                {% endif %}
-                <div class="content-section">
-                    <h3>Most Popular</h3>
-                    <p class='text-muted'>
-                        <ul class="list-group">
-                            <li class="list-group-item list-group-item-light">AAPL</li>
-                            <li class="list-group-item list-group-item-light">TSLA</li>
-                            <li class="list-group-item list-group-item-light">ZM</li>
-                            <li class="list-group-item list-group-item-light">SNAP</li>
-                        </ul>
-                    </p>
-                </div>
+            {% if sidepanels %}
+            <div class="col-md-4 content-selection">
+                <h3>Favorites</h3>
+                <p class='text-muted'>
+                    <ul class="list-group">
+                        {% for side in sidepanels %}
+                        <li class="list-group-item list-group-item-light"><a class="text-muted" href="{% url 'app-simulate' side %}">{{ side }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </p>
             </div>
-            
-            {% endblock sidepanels %}
+            {% endif %}
+            {% block loginpanels %}
+            {% endblock loginpanels %}
+
         </div>
     </main>
-
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/8d5be15beb.js" crossorigin="anonymous"></script>
+    <script>
+        function fn(){
+            $.get('addfav/');
+            alert("Added to Favorites");
+            location.reload();
+        }
+        function remstock(inputs){
+            var PAGE_URL = inputs+"/removefav";
+            $.get(PAGE_URL);
+            alert("Removed "+inputs+" From Favorites");
+            location.reload();
+        }
+    </script>
     {% block scripts %}
-
     {% endblock scripts %}
 </body>
 </html>
