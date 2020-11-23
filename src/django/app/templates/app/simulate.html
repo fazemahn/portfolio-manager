@@ -12,17 +12,19 @@
         <h3 class="{% if stockInfo.change > 0 %}text-success{% elif stockInfo.change < 0 %}text-danger{% endif %} d-inline-block">({{stockInfo.change}}%)</h3>
     </div>
     <hr/>
-    <div class="plot-area">
-        <div class="plot-content" data-plot-num="1"></div>
-        <div class="plot-content" data-plot-num="2" style="display:none"></div>
-        <div class="plot-content" data-plot-num="3" style="display:none"></div>
-        <div class="plot-content" data-plot-num="4" style="display:none"></div>
-    </div>
-    <div class="plot-tabs">
-      <div class="plot-tab tab-selected" data-plot-num="1">Plot 1</div>
-      <div class="plot-tab" data-plot-num="2">Plot 2</div>
-      <div class="plot-tab" data-plot-num="3">Plot 3</div>
-      <div class="plot-tab" data-plot-num="4">Plot 4</div>
+    <div id="plot" style="display: none">
+      <div class="plot-area">
+          <div class="plot-content" data-plot-num="1" id="plotHistory"></div>
+          <div class="plot-content" data-plot-num="2" style="display:none" id="plotPdf"></div>
+          <div class="plot-content" data-plot-num="3" style="display:none" id="plotSingle"></div>
+          <div class="plot-content" data-plot-num="4" style="display:none" id="plotMulti"></div>
+      </div>
+      <div class="plot-tabs">
+        <div class="plot-tab tab-selected" data-plot-num="1">Plot 1</div>
+        <div class="plot-tab" data-plot-num="2">Plot 2</div>
+        <div class="plot-tab" data-plot-num="3">Plot 3</div>
+        <div class="plot-tab" data-plot-num="4">Plot 4</div>
+      </div>
     </div>
     <form method="GET" id="simForm">
       <input hidden value="{{ stockInfo.symbol }}" name="ticker" type="text" />
@@ -30,13 +32,13 @@
         <div class="col-md-6 mt-4">
           <label for="sim_amount" class="h6">Number of Simulations</label>
           <div class="input-group">
-            <input required class="form-control" type="number" name="sim_amount">
+            <input required class="form-control" type="number" name="sim_amount" value="10">
           </div>
         </div>
         <div class="col-md-6 mt-4">
           <label for="time_steps" class="h6">Steps Into the Future</label>
           <div class="input-group">
-            <input required class="form-control" type="number" name="time_steps">
+            <input required class="form-control" type="number" name="time_steps" value="30">
           </div>
         </div>   
       </div>
@@ -56,7 +58,15 @@
       </div> 
       <div class="row">
         <div class="col-md-6 mt-4">
-            <button class="btn btn-success" type="submit">Go <i class="fa fa-arrow-right"></i></button>
+            <button class="btn btn-success" type="submit" id="ajaxButton">
+              <div class="magic-div">
+                <span>Go </span>
+                <i class="fa fa-arrow-right"></i>
+                <div class="loader-container" style="display:none">
+                  <div class="loader"></div>
+                </div>
+              </div>
+            </button>
         </div>
       </div> 
     </form>
@@ -68,12 +78,13 @@
         {% csrf_token %}
         <textarea required class="mt-4 textbox-input" name="comment_body" placeholder="Write a comment..."></textarea>
         <div class="submit-bar">
-          <button>Submit</button>
+          <button><span>Submit</span></button>
         </div>
       </form>
       <br>
       <hr/>
     {% endif %}
+    {% if commentInfo %}
     {% for key, comment in commentInfo.items %}
       <article class="media content-section">
           <div class="media-body">
@@ -85,19 +96,36 @@
           </div>
       </article>
     {% endfor %}
+    {% else %}
+    <span class="text-muted">There don't seem to be any comments here yet</span>
+    {% endif %}
+    
 {% endblock content %}
 
 {% block scripts %}
 <script>
+
   $("#simForm").submit(function() {
+    $(".magic-div").children("i, span").hide();
+    $(".magic-div").children("div").show();
+    $("#ajaxButton").prop('disabled', true);
     var params = $('#simForm').serialize();
     $.get("{% url 'api-simulate' %}", params)
     .done(function (data) {
-      console.log(data);
-      $('#mySectionId').html(data);
+      plots = JSON.parse(data);
+      $("#plotHistory").html(plots["plot_history"]);
+      $("#plotPdf").html(plots["plot_pdf"]);
+      $("#plotSingle").html(plots["plot_single"]);
+      $("#plotMulti").html(plots["plot_multi"]);
+      $("#plot").show();
     })
     .fail(function (data) {
       console.log("An error occurred")
+    })
+    .always(function() {
+      $(".magic-div").children("i, span").show();
+      $(".magic-div").children("div").hide();
+      $("#ajaxButton").prop('disabled', false);
     });
     return false;
   })
