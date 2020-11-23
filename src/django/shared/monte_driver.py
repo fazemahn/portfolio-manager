@@ -12,22 +12,22 @@ mon.create_DataFrame()
 mon.simulate()
 
 # creates html file of the Monte object's figure
-html_str1 = mon.plot_history()
+html_str1, html_dict1 = mon.plot_history()
 html_file1 = open("plots1.html","w") # writes string to html file
 html_file1.write(html_str1)
 html_file1.close()
 
-html_str2 = mon.plot_pdf()
+html_str2, html_dict2 = mon.plot_pdf()
 html_file2 = open("plots2.html","w") # writes string to html file
 html_file2.write(html_str2)
 html_file2.close()
 
-html_str3 = mon.plot_single()
+html_str3, html_dict3 = mon.plot_single()
 html_file3 = open("plots3.html","w") # writes string to html file
 html_file3.write(html_str3)
 html_file3.close()
 
-html_str4 = mon.plot_multi()
+html_str4, html_dict4 = mon.plot_multi()
 html_file4 = open("plots4.html","w") # writes string to html file
 html_file4.write(html_str4)
 html_file4.close()
