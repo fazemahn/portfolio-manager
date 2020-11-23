@@ -105,23 +105,28 @@
     <script>
         function fn(symbol, name){
             if (symbol != null) {
-                $.get('/addfav/' + symbol + '/' + name);
+                $.get('/favourites/addfav/' + symbol + '/' + name).always(function () {
+                    location.reload();
+                });
             }
             
-            location.reload();
+            
         }
-        function remstock(inputs){
-            var PAGE_URL = inputs+"/removefav";
-            $.get(PAGE_URL);
-            alert("Removed "+inputs+" From Favorites");
-            location.reload();
+        function remstock(symbol){
+            var PAGE_URL = "/favourites/remfav/" + symbol;
+            $.get(PAGE_URL).always(function () {
+                location.reload();
+            });
+            
         }
         function remcomm(data){
             var PAGE_URL = data+"/removecomment";
             alert(PAGE_URL);
-            $.get(PAGE_URL);
-            alert("Removed "+inputs+" From Comments");
-            location.reload();
+            $.get(PAGE_URL).always(function() {
+                alert("Removed "+inputs+" From Comments");
+                location.reload();
+            });
+            
         }
     </script>
     {% block scripts %}

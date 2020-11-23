@@ -22,9 +22,15 @@ def remcom(request, commID):
     return HttpResponse("Comment Removed")
 
 def remfav(request, stockSymbol):
-    return HttpResponse()
     # need to check if already in the list before increasing popularity
     # not done for now.
+    stock = Stock.objects.filter(ticker=stockSymbol).first()
+    curruser = request.user
+    curruser.trader.favorites.remove(stock)
+    stock.popularity -= 1
+    stock.save()
+
+    return HttpResponse("Favorites are Added")
 
 def addfav(request, stockSymbol, stockName):
     stock = Stock.objects.filter(ticker=stockSymbol).first()
