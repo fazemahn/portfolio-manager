@@ -12,8 +12,17 @@
         <h3 class="{% if stockInfo.change > 0 %}text-success{% elif stockInfo.change < 0 %}text-danger{% endif %} d-inline-block">({{stockInfo.change}}%)</h3>
     </div>
     <hr/>
-    <div class="content-section">
-        <div style="height: 500px"></div>
+    <div class="plot-area">
+        <div class="plot-content" data-plot-num="1"></div>
+        <div class="plot-content" data-plot-num="2" style="display:none"></div>
+        <div class="plot-content" data-plot-num="3" style="display:none"></div>
+        <div class="plot-content" data-plot-num="4" style="display:none"></div>
+    </div>
+    <div class="plot-tabs">
+      <div class="plot-tab tab-selected" data-plot-num="1">Plot 1</div>
+      <div class="plot-tab" data-plot-num="2">Plot 2</div>
+      <div class="plot-tab" data-plot-num="3">Plot 3</div>
+      <div class="plot-tab" data-plot-num="4">Plot 4</div>
     </div>
     <form method="GET" id="simForm">
       <input hidden value="{{ stockInfo.symbol }}" name="ticker" type="text" />
@@ -92,5 +101,15 @@
     });
     return false;
   })
+
+  $(".plot-tab").click(function() {
+    $(this).parent().children(".tab-selected").removeClass("tab-selected");
+    $(this).addClass("tab-selected");
+    let plotNum = $(this).data("plot-num");
+    let filter = "[data-plot-num='" + plotNum + "']"
+    $(".plot-area > .plot-content").hide();
+    $(filter).show();
+    
+  });
 </script>
 {% endblock scripts %}

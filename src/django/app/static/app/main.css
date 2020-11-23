@@ -140,3 +140,41 @@ a.article-title:hover {
     
     float: right;
 }
+
+.plot-area {
+    background: white;
+    border: 1px solid #e4e4e4;
+    border-radius: 3px 3px 3px 0px;
+    width: 100%;
+    height: 400px;
+    margin-bottom: -1px;
+}
+
+.plot-content {
+    width: 100%;
+    height: 100%;
+}
+
+.plot-tabs {
+    padding: 0px;
+    margin-top: -1px;
+    display: inline;
+    user-select: none;
+}
+
+.plot-tab {
+    cursor: pointer;
+    border: 1px solid #e4e4e4;
+    display: inline-block;
+    text-align: center;
+    background-color: #fafafa;
+    border-radius: 0 0 3px 3px;
+    width: 100px;
+    height: 30px;
+    color: grey;
+}
+
+.plot-tab.tab-selected {
+    background-color: white;
+    border-top: 1px solid white;
+}
