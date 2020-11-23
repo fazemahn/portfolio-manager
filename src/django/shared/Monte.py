@@ -151,7 +151,8 @@ class Monte:
         self.history = history
 
         plot_history_str = mpld3.fig_to_html(self.history) # saves figure to string of html
-        return plot_history_str
+        plot_history_dict = mpld3.fig_to_dict(self.history)
+        return plot_history_str, plot_history_dict
 
     def plot_pdf(self):
         """
@@ -181,7 +182,8 @@ class Monte:
         plt.title(title)
 
         plot_pdf_str = mpld3.fig_to_html(fig) # saves figure to string of html
-        return plot_pdf_str
+        plot_pdf_dict = mpld3.fig_to_dict(fig)
+        return plot_pdf_str, plot_pdf_dict
     
     def plot_single(self):
         """
@@ -205,7 +207,8 @@ class Monte:
         single = plt.gcf()
 
         plot_single_str = mpld3.fig_to_html(single) # saves figure to string of html
-        return plot_single_str
+        plot_single_dict = mpld3.fig_to_dict(single)
+        return plot_single_str, plot_single_dict
     
     def plot_multi(self):
         """
@@ -225,9 +228,10 @@ class Monte:
         multi = plt.gcf()
 
         plot_multi_str = mpld3.fig_to_html(multi) # saves figure to string of html
-        return plot_multi_str
+        plot_multi_dict = mpld3.fig_to_dict(multi)
+        return plot_multi_str, plot_multi_dict
     
-    def get_json(self, plot_history_str, plot_pdf_str, plot_single_str, plot_multi_str):
+    def get_json(self, plot_history_dict, plot_pdf_dict, plot_single_dict, plot_multi_dict):
         """
         Function that returns the json data for the html plots.
 
@@ -235,10 +239,10 @@ class Monte:
         """
 
         plot_dict = {
-            "plot_history" : plot_history_str, 
-            "plot_pdf" : plot_pdf_str, 
-            "plot_single" : plot_single_str, 
-            "plot_multi" : plot_multi_str
+            "plot_history" : plot_history_dict, 
+            "plot_pdf" : plot_pdf_dict, 
+            "plot_single" : plot_single_dict, 
+            "plot_multi" : plot_multi_dict
         }
 
         plot_json = json.dumps(plot_dict, indent=4) # converts dictionary to json
