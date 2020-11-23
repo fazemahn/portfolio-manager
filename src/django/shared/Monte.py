@@ -30,7 +30,8 @@ class Monte:
         self.data_source = data_source
         self.data = pd.DataFrame()
         self.monte_sims = pd.DataFrame()
-        self.figure = plt.figure(figsize=(16,10))
+        self.figure = plt.figure(figsize=(10,6))
+
         
     def create_DataFrame(self):
         """
@@ -62,8 +63,8 @@ class Monte:
         # Fills monte_sims with simulated prices which are pseudorandomized with daily_returns
         for t in range(1, self.time_steps):
             self.monte_sims[t] = self.monte_sims[t - 1] * daily_returns[t]
-
-    def plot(self):
+    
+    def plot_all(self):
         """
         Function that sends
 
@@ -129,15 +130,115 @@ class Monte:
         html_str = mpld3.fig_to_html(self.figure) # saves figure to string of html
 
         return html_str
+    
+    def plot_history(self):
+        """
+        """
 
+        stock_plot = self.data.plot(figsize=(10, 6))
+        stock_plot.set_xlabel('Date')
+        stock_plot.set_ylabel('Adjusted Closing Price')
+        stock_plot.set_title("Adjusted Closing Prices Over Time")
+
+        history = plt.gcf()
+        self.history = history
+
+        plot_history_str = mpld3.fig_to_html(self.history) # saves figure to string of html
+        return plot_history_str
+
+    def plot_pdf(self):
+        """
+        """
+    
+        # Histogram for the price frequencies, number of bins can be adjusted'
+        fig = plt.figure(figsize=(10, 6))
+        plt.hist(self.monte_sims[1], bins=10, density=True)
+
+        # Probability Density Function
+        sim_mu, sim_sig = norm.fit(self.monte_sims[1]) # Simulation mean and standard deviation values
+        xmin, xmax = plt.xlim() # set the xmin and xmax along the x-axis for the pdf
+        x = np.linspace(xmin, xmax)
+        p = norm.pdf(x, sim_mu, sim_sig)
+
+        # Plots frequencies of the Monte Carle simulations fit to normal distribution
+        plt.plot(x, p, 'k') # normal distribution fit
+        plt.xlabel('Adjusted Closing Price')
+        plt.ylabel('Probability Density')
+        title = "Histogram for Simulations of Adjusted Closing Price 1 Day into the Future\n(PDF fit results: mu = %.4f,  sigma = %.4f)" % (sim_mu, sim_sig)
+        plt.title(title)
+
+        plot_pdf_str = mpld3.fig_to_html(fig) # saves figure to string of html
+        return plot_pdf_str
+    
+    def plot_single(self):
+        """
+        """
+
+        single = []
+        for item in self.monte_sims:
+            single.append(item[0])
+
+        plt.figure(figsize=(10,6))
+        plt.plot(single)
+        plt.xlabel('Date')
+        plt.ylabel('Adjusted Closing Price')
+        plt.title('Simulated Adjusted Closing Prices Over Time')
+
+        single = plt.gcf()
+
+        plot_single_str = mpld3.fig_to_html(single) # saves figure to string of html
+        return plot_single_str
+    
+    def plot_multi(self):
+        """
+        """
+
+        plt.figure(figsize=(10,6))
+        plt.plot(self.monte_sims)
+        plt.xlabel('Days into the Future')
+        plt.ylabel('Adjusted Closing Price')
+        title = "Monte Carlo Simulations for Adjusted Closing Prices"
+        plt.title(title)
+
+        multi = plt.gcf()
+
+        plot_multi_str = mpld3.fig_to_html(multi) # saves figure to string of html
+        return plot_multi_str
+    
+    def get_json(self, plot_history_str, plot_pdf_str, plot_single_str, plot_multi_str):
+        """
+        :returns:
+        """
+
+        plot_dict = {
+            "plot_history" : plot_history_str, 
+            "plot_pdf" : plot_pdf_str, 
+            "plot_single" : plot_single_str, 
+            "plot_multi" : plot_multi_str
+        }
+
+        plot_json = json.dumps(plot_dict, indent=4) # converts dictionary to json
+
+        return plot_json
+
+
+
+    '''
     def get_json(self):
         """
         Function that converts the figure to Python dictionary which is directly json-serializable.
 
-        :returns: plot_dict which 
+        :returns: plot_dict
         """
         
-        plot_dict = mpld3.fig_to_dict(self.figure) # saves figure dictionary
-        plot_json = json.dumps(plot_dict, indent=4) # converts dictionary to json
+        #plot_dict = mpld3.fig_to_dict(self.figure) # saves figure dictionary
+        #plot_json = json.dumps(plot_dict, indent=4) # converts dictionary to json
+
+        plot_history_dict = mpld3.fig_to_dict(self.plot_history)
+        plot_history_json = json.dumps(plot_history_dict, indent=4)
+
+        plot_pdf_dict = mpld3.fig_to_dict(self.plot_pdf)
+        plot_pdf_json = json.dumps(plot_pdf_dict, indent=4)
 
         return plot_json
+    '''
