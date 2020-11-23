@@ -71,75 +71,7 @@ class Monte:
         # Fills monte_sims with simulated prices which are pseudorandomized with daily_returns
         for t in range(1, self.time_steps):
             self.monte_sims[t] = self.monte_sims[t - 1] * daily_returns[t]
-    
-    def plot_all(self):
-        """
-        Original function which generates one figure with 4 subplots made from user inputs. The 
-        functions below this one separate all of the plots into their own figures.
 
-        :returns: html_str which is a string that contains the graphical output for the matplotlib plots
-        :rtype: str
-        """
-        # Creating the fig object for the matplotlib canvas
-        fig, axs = plt.subplots(2, 2, figsize = (16,10))
-        
-        # Stock Data Subplot ################################################################
-        stock_plot = axs[0, 0]
-        
-        stock_plot.plot(self.data)
-        stock_plot.set_xlabel('Date')
-        stock_plot.set_ylabel('Adjusted Closing Price')
-        stock_plot.set_title("Adjusted Closing Prices Over Time")
-
-        # Single Future Price Subplot #######################################################
-        plt.subplot(2,2,3)
-
-        single = []
-        for item in self.monte_sims:
-            single.append(item[0])
-
-        plt.plot(single)
-        plt.xlabel('Days into the Future')
-        plt.ylabel('Adjusted Closing Price')
-        title = "Single Set of Simulations for Adjusted Closing Prices"
-        plt.title(title)
-
-        # Multiple Future Price Subplot #####################################################
-        plt.subplot(2,2,4)
-
-        plt.plot(self.monte_sims)
-        plt.xlabel('Days into the Future')
-        plt.ylabel('Adjusted Closing Price')
-        title = "Monte Carlo Simulations for Adjusted Closing Prices"
-        plt.title(title)
-
-        # PDF Fit Subplot ###################################################################
-        plt.subplot(2,2,2)
-
-        # Histogram for the price frequencies, number of bins can be adjusted
-        plt.hist(self.monte_sims[1], bins=10, density=True)
-
-        # Probability Density Function
-        sim_mu, sim_sig = norm.fit(self.monte_sims[1]) # Simulation mean and standard deviation values
-        xmin, xmax = plt.xlim() # set the xmin and xmax along the x-axis for the pdf
-        x = np.linspace(xmin, xmax)
-        p = norm.pdf(x, sim_mu, sim_sig)
-
-        # Plots frequencies of the Monte Carle simulations fit to normal distribution
-        plt.plot(x, p, 'k') # normal distribution fit
-        plt.xlabel('Adjusted Closing Price')
-        plt.ylabel('Probability Density')
-        title = "Simulations 1 Day into the Future\nPDF fit results: μ = %.4f,  σ = %.4f" % (sim_mu, sim_sig)
-        plt.title(title)
-
-        # Save the figure to HTML string ##################################################
-        plt.tight_layout()
-        self.figure = plt.gcf()
-        
-        html_str = mpld3.fig_to_html(self.figure) # saves figure to string of html
-
-        return html_str
-    
     def plot_history(self):
         """
         Function that plots the history of stock prices in the time frame set by the user.
@@ -258,7 +190,78 @@ class Monte:
     def clear_figures(self):
         plt.close('all')
 
+    '''
+    These commented out functions are for if we want to plot all the subplots onto one plot.
+    '''
+    '''
+    def plot_all(self):
+        """
+        Original function which generates one figure with 4 subplots made from user inputs. The 
+        functions below this one separate all of the plots into their own figures.
 
+        :returns: html_str which is a string that contains the graphical output for the matplotlib plots
+        :rtype: str
+        """
+        # Creating the fig object for the matplotlib canvas
+        fig, axs = plt.subplots(2, 2, figsize = (16,10))
+        
+        # Stock Data Subplot ################################################################
+        stock_plot = axs[0, 0]
+        
+        stock_plot.plot(self.data)
+        stock_plot.set_xlabel('Date')
+        stock_plot.set_ylabel('Adjusted Closing Price')
+        stock_plot.set_title("Adjusted Closing Prices Over Time")
+
+        # Single Future Price Subplot #######################################################
+        plt.subplot(2,2,3)
+
+        single = []
+        for item in self.monte_sims:
+            single.append(item[0])
+
+        plt.plot(single)
+        plt.xlabel('Days into the Future')
+        plt.ylabel('Adjusted Closing Price')
+        title = "Single Set of Simulations for Adjusted Closing Prices"
+        plt.title(title)
+
+        # Multiple Future Price Subplot #####################################################
+        plt.subplot(2,2,4)
+
+        plt.plot(self.monte_sims)
+        plt.xlabel('Days into the Future')
+        plt.ylabel('Adjusted Closing Price')
+        title = "Monte Carlo Simulations for Adjusted Closing Prices"
+        plt.title(title)
+
+        # PDF Fit Subplot ###################################################################
+        plt.subplot(2,2,2)
+
+        # Histogram for the price frequencies, number of bins can be adjusted
+        plt.hist(self.monte_sims[1], bins=10, density=True)
+
+        # Probability Density Function
+        sim_mu, sim_sig = norm.fit(self.monte_sims[1]) # Simulation mean and standard deviation values
+        xmin, xmax = plt.xlim() # set the xmin and xmax along the x-axis for the pdf
+        x = np.linspace(xmin, xmax)
+        p = norm.pdf(x, sim_mu, sim_sig)
+
+        # Plots frequencies of the Monte Carle simulations fit to normal distribution
+        plt.plot(x, p, 'k') # normal distribution fit
+        plt.xlabel('Adjusted Closing Price')
+        plt.ylabel('Probability Density')
+        title = "Simulated Prices %d Days into the Future\n(PDF fit results: μ = %.4f,  σ = %.4f)" % (self.time_steps - 1, sim_mu, sim_sig)
+        plt.title(title)
+
+        # Save the figure to HTML string ##################################################
+        plt.tight_layout()
+        self.figure = plt.gcf()
+        
+        html_str = mpld3.fig_to_html(self.figure) # saves figure to string of html
+
+        return html_str
+    '''
     '''
     def get_json(self):
         """
