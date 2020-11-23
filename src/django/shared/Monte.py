@@ -26,7 +26,7 @@ class Monte:
 
         self.ticker = ticker
         self.sim_amount = sim_amount
-        self.time_steps = time_steps
+        self.time_steps = time_steps + 1
         self.start = start
         self.end = end
         self.data_source = data_source
