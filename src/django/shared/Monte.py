@@ -68,7 +68,8 @@ class Monte:
     
     def plot_all(self):
         """
-        Function that sends
+        Original function which generates one figure with 4 subplots made from user inputs. The 
+        functions below this one separate all of the plots into their own figures.
 
         :returns: html_str which is a string that contains the graphical output for the matplotlib plots
         :rtype: str
@@ -135,6 +136,10 @@ class Monte:
     
     def plot_history(self):
         """
+        Function that plots the history of stock prices in the time frame set by the user.
+
+        :returns: plot_history_str which is a string which contains the html for the graphical output.
+        :rtype: str
         """
 
         stock_plot = self.data.plot(figsize=(10, 6))
@@ -150,6 +155,12 @@ class Monte:
 
     def plot_pdf(self):
         """
+        Function that plots the distribution of simulated prices of a given time step into the future.
+        This histogram is fit to a Probability Density Function with the mean and standard deviation
+        listed in the title.
+
+        :returns: plot_pdf_str which is a string which contains the html for the graphical output.
+        :rtype: str
         """
     
         # Histogram for the price frequencies, number of bins can be adjusted'
@@ -174,6 +185,11 @@ class Monte:
     
     def plot_single(self):
         """
+        Function that plots the first element in each set of simulations after a given time step.
+        These elements are plotted to show a single simulated projection line.
+
+        :returns: plot_single_str which is a string which contains the html for the graphical output.
+        :rtype: str
         """
 
         single = []
@@ -193,6 +209,10 @@ class Monte:
     
     def plot_multi(self):
         """
+        Function that plots all of the price simualtions at each time step into the future.
+
+        :returns: plot_multi_str which is a string which contains the html for the graphical output.
+        :rtype: str
         """
 
         plt.figure(figsize=(10,6))
@@ -209,7 +229,9 @@ class Monte:
     
     def get_json(self, plot_history_str, plot_pdf_str, plot_single_str, plot_multi_str):
         """
-        :returns:
+        Function that returns the json data for the html plots.
+
+        :returns: plot_json which is the json that contains the html strings for each plot.
         """
 
         plot_dict = {
@@ -222,7 +244,6 @@ class Monte:
         plot_json = json.dumps(plot_dict, indent=4) # converts dictionary to json
 
         return plot_json
-
 
 
     '''
