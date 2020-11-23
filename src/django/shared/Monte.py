@@ -249,6 +249,9 @@ class Monte:
 
         return plot_json
 
+    def clear_figures(self):
+        plt.close('all')
+
 
     '''
     def get_json(self):

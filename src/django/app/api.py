@@ -42,5 +42,7 @@ def simulate(request):
         json_file.close()
         '''
 
+        monte_object.clear_figures()
+
         return HttpResponse(html_str) # this could also change to html_dict if preferred
     return HttpResponseBadRequest()
