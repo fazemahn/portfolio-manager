@@ -32,7 +32,7 @@ class Monte:
         self.data_source = data_source
         self.data = pd.DataFrame()
         self.monte_sims = pd.DataFrame()
-        self.figure = plt.figure(figsize=(10,6))
+        self.figure = plt.figure(figsize=(5,4))
 
         
     def create_DataFrame(self):
@@ -123,7 +123,7 @@ class Monte:
         plt.plot(x, p, 'k') # normal distribution fit
         plt.xlabel('Adjusted Closing Price')
         plt.ylabel('Probability Density')
-        title = "Histogram for Simulations of Adjusted Closing Price 1 Day into the Future\nPDF fit results: mu = %.4f,  sigma = %.4f" % (sim_mu, sim_sig)
+        title = "Simulations 1 Day into the Future\nPDF fit results: mu = %.4f,  sigma = %.4f" % (sim_mu, sim_sig)
         plt.title(title)
 
         # Save the figure to HTML string ##################################################
@@ -142,7 +142,7 @@ class Monte:
         :rtype: str
         """
 
-        stock_plot = self.data.plot(figsize=(10, 6))
+        stock_plot = self.data.plot(figsize=(5,4))
         stock_plot.set_xlabel('Date')
         stock_plot.set_ylabel('Adjusted Closing Price')
         stock_plot.set_title("Adjusted Closing Prices Over Time")
@@ -165,7 +165,7 @@ class Monte:
         """
     
         # Histogram for the price frequencies, number of bins can be adjusted'
-        fig = plt.figure(figsize=(10, 6))
+        fig = plt.figure(figsize=(5,4))
         plt.hist(self.monte_sims[1], bins=10, density=True)
 
         # Probability Density Function
@@ -198,7 +198,7 @@ class Monte:
         for item in self.monte_sims:
             single.append(item[0])
 
-        plt.figure(figsize=(10,6))
+        plt.figure(figsize=(5,4))
         plt.plot(single)
         plt.xlabel('Date')
         plt.ylabel('Adjusted Closing Price')
@@ -218,7 +218,7 @@ class Monte:
         :rtype: str
         """
 
-        plt.figure(figsize=(10,6))
+        plt.figure(figsize=(5,4))
         plt.plot(self.monte_sims)
         plt.xlabel('Days into the Future')
         plt.ylabel('Adjusted Closing Price')
