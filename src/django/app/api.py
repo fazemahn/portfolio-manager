@@ -30,9 +30,5 @@ def simulate(request):
 
         html_str = monte_object.get_json(html_str1, html_str2, html_str3, html_str4)
 
-        #html_file = open("plots.html","w") # writes string to html file
-        #html_file.write(html_str)
-        #html_file.close()
-
         return HttpResponse(html_str)
     return HttpResponseBadRequest()
