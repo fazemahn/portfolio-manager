@@ -25,5 +25,9 @@ def simulate(request):
         monte_object.simulate()
         html_str = monte_object.plot()
 
+        #html_file = open("plots.html","w") # writes string to html file
+        #html_file.write(html_str)
+        #html_file.close()
+
         return HttpResponse(html_str)
     return HttpResponseBadRequest()
