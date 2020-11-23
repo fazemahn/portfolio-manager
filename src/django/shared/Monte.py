@@ -29,7 +29,7 @@ class Monte:
 
         self.ticker = ticker
         self.sim_amount = sim_amount
-        self.time_steps = time_steps
+        self.time_steps = time_steps + 1
         self.start = start
         self.end = end
         self.data_source = data_source
@@ -172,10 +172,10 @@ class Monte:
     
         # Histogram for the price frequencies, number of bins can be adjusted'
         fig = plt.figure(figsize=(self.width, self.height))
-        plt.hist(self.monte_sims[self.time_steps - 1], bins=10, density=True)
+        plt.hist(self.monte_sims[self.time_steps - 2], bins=10, density=True)
 
         # Probability Density Function
-        sim_mu, sim_sig = norm.fit(self.monte_sims[self.time_steps - 1]) # Simulation mean and standard deviation values
+        sim_mu, sim_sig = norm.fit(self.monte_sims[self.time_steps - 2]) # Simulation mean and standard deviation values
         xmin, xmax = plt.xlim() # set the xmin and xmax along the x-axis for the pdf
         x = np.linspace(xmin, xmax)
         p = norm.pdf(x, sim_mu, sim_sig)
