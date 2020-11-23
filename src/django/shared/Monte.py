@@ -12,27 +12,33 @@ from scipy.stats import norm
 
 class Monte:
 
-    def __init__(self, ticker, sim_amount, time_steps, start, end=dt.datetime.now(), data_source='yahoo'):
+    def __init__(self, ticker, sim_amount, time_steps, width, height, dpi, start, end, data_source='yahoo'):
         """
         Initialization function for the Monte object.
 
         :param ticker: the ticker label associated with a stock
         :param sim_amount: the amount of simulations to be done
         :param time_steps: the number of time steps into the future the simualtion will go
+        :param width: width of the figure in pixels
+        :param height: height of the figure in pixels
+        :param dpi: the dpi for the browser display
         :param start: the start datetime for the simulations
-        :param end: the end datetime for the simulations. Present time is default.
-        :param data_source: data source from where the stock data is derived. Yahoo finance is the default.
+        :param end: the end datetime for the simulations
+        :param data_source: data source from where the stock data is derived. Yahoo finance is the default
         """
 
         self.ticker = ticker
         self.sim_amount = sim_amount
-        self.time_steps = time_steps + 1
+        self.time_steps = time_steps
         self.start = start
         self.end = end
         self.data_source = data_source
+        self.width = width / dpi
+        self.height = height / dpi
+        self.dpi = dpi
         self.data = pd.DataFrame()
         self.monte_sims = pd.DataFrame()
-        self.figure = plt.figure(figsize=(5,4))
+        self.figure = plt.figure(figsize=(self.width, self.height))
 
         
     def create_DataFrame(self):
@@ -47,7 +53,7 @@ class Monte:
         """
         Function that does the necessary calculations for the simulation data.
         """
-        np.random.seed(8)
+        # np.random.seed(8) this can be used to seed the simulation so you can repeat results
 
         # Initial data values needed to set up the simulations.
         log_returns = np.log(1 + self.data.pct_change()) # percentage change between current and prior element
@@ -123,7 +129,7 @@ class Monte:
         plt.plot(x, p, 'k') # normal distribution fit
         plt.xlabel('Adjusted Closing Price')
         plt.ylabel('Probability Density')
-        title = "Simulations 1 Day into the Future\nPDF fit results: mu = %.4f,  sigma = %.4f" % (sim_mu, sim_sig)
+        title = "Simulations 1 Day into the Future\nPDF fit results: μ = %.4f,  σ = %.4f" % (sim_mu, sim_sig)
         plt.title(title)
 
         # Save the figure to HTML string ##################################################
@@ -142,17 +148,17 @@ class Monte:
         :rtype: str
         """
 
-        stock_plot = self.data.plot(figsize=(5,4))
+        stock_plot = self.data.plot(figsize=(self.width, self.height))
         stock_plot.set_xlabel('Date')
         stock_plot.set_ylabel('Adjusted Closing Price')
-        stock_plot.set_title("Adjusted Closing Prices Over Time")
+        stock_plot.set_title("Historical Adjusted Closing Prices Over Time")
 
         history = plt.gcf()
         self.history = history
 
         plot_history_str = mpld3.fig_to_html(self.history) # saves figure to string of html
-        plot_history_dict = mpld3.fig_to_dict(self.history)
-        return plot_history_str, plot_history_dict
+        #plot_history_dict = mpld3.fig_to_dict(self.history)
+        return plot_history_str
 
     def plot_pdf(self):
         """
@@ -165,11 +171,11 @@ class Monte:
         """
     
         # Histogram for the price frequencies, number of bins can be adjusted'
-        fig = plt.figure(figsize=(5,4))
-        plt.hist(self.monte_sims[1], bins=10, density=True)
+        fig = plt.figure(figsize=(self.width, self.height))
+        plt.hist(self.monte_sims[self.time_steps - 1], bins=10, density=True)
 
         # Probability Density Function
-        sim_mu, sim_sig = norm.fit(self.monte_sims[1]) # Simulation mean and standard deviation values
+        sim_mu, sim_sig = norm.fit(self.monte_sims[self.time_steps - 1]) # Simulation mean and standard deviation values
         xmin, xmax = plt.xlim() # set the xmin and xmax along the x-axis for the pdf
         x = np.linspace(xmin, xmax)
         p = norm.pdf(x, sim_mu, sim_sig)
@@ -178,12 +184,12 @@ class Monte:
         plt.plot(x, p, 'k') # normal distribution fit
         plt.xlabel('Adjusted Closing Price')
         plt.ylabel('Probability Density')
-        title = "Simulations 1 Day into the Future\n(PDF fit results: mu = %.4f,  sigma = %.4f)" % (sim_mu, sim_sig)
+        title = "Simulated Price%d Days into the Future\n(PDF fit results: μ = %.4f,  σ = %.4f)" % (self.time_steps, sim_mu, sim_sig)
         plt.title(title)
 
         plot_pdf_str = mpld3.fig_to_html(fig) # saves figure to string of html
-        plot_pdf_dict = mpld3.fig_to_dict(fig)
-        return plot_pdf_str, plot_pdf_dict
+        #plot_pdf_dict = mpld3.fig_to_dict(fig)
+        return plot_pdf_str
     
     def plot_single(self):
         """
@@ -198,17 +204,17 @@ class Monte:
         for item in self.monte_sims:
             single.append(item[0])
 
-        plt.figure(figsize=(5,4))
+        plt.figure(figsize=(self.width, self.height))
         plt.plot(single)
-        plt.xlabel('Date')
+        plt.xlabel('Days into the Future')
         plt.ylabel('Adjusted Closing Price')
         plt.title('Simulated Adjusted Closing Prices Over Time')
 
         single = plt.gcf()
 
         plot_single_str = mpld3.fig_to_html(single) # saves figure to string of html
-        plot_single_dict = mpld3.fig_to_dict(single)
-        return plot_single_str, plot_single_dict
+        #plot_single_dict = mpld3.fig_to_dict(single)
+        return plot_single_str
     
     def plot_multi(self):
         """
@@ -218,7 +224,7 @@ class Monte:
         :rtype: str
         """
 
-        plt.figure(figsize=(5,4))
+        plt.figure(figsize=(self.width, self.height))
         plt.plot(self.monte_sims)
         plt.xlabel('Days into the Future')
         plt.ylabel('Adjusted Closing Price')
@@ -228,10 +234,10 @@ class Monte:
         multi = plt.gcf()
 
         plot_multi_str = mpld3.fig_to_html(multi) # saves figure to string of html
-        plot_multi_dict = mpld3.fig_to_dict(multi)
-        return plot_multi_str, plot_multi_dict
+        #plot_multi_dict = mpld3.fig_to_dict(multi)
+        return plot_multi_str
     
-    def get_json(self, plot_history_dict, plot_pdf_dict, plot_single_dict, plot_multi_dict):
+    def get_json(self, plot_history_str, plot_pdf_str, plot_single_str, plot_multi_str):
         """
         Function that returns the json data for the html plots.
 
@@ -239,10 +245,10 @@ class Monte:
         """
 
         plot_dict = {
-            "plot_history" : plot_history_dict, 
-            "plot_pdf" : plot_pdf_dict, 
-            "plot_single" : plot_single_dict, 
-            "plot_multi" : plot_multi_dict
+            "plot_history" : plot_history_str, 
+            "plot_pdf" : plot_pdf_str, 
+            "plot_single" : plot_single_str, 
+            "plot_multi" : plot_multi_str
         }
 
         plot_json = json.dumps(plot_dict, indent=4) # converts dictionary to json
