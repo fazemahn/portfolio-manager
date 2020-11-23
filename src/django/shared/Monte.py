@@ -184,7 +184,7 @@ class Monte:
         plt.plot(x, p, 'k') # normal distribution fit
         plt.xlabel('Adjusted Closing Price')
         plt.ylabel('Probability Density')
-        title = "Simulated Price%d Days into the Future\n(PDF fit results: μ = %.4f,  σ = %.4f)" % (self.time_steps, sim_mu, sim_sig)
+        title = "Simulated Prices %d Days into the Future\n(PDF fit results: μ = %.4f,  σ = %.4f)" % (self.time_steps, sim_mu, sim_sig)
         plt.title(title)
 
         plot_pdf_str = mpld3.fig_to_html(fig) # saves figure to string of html
