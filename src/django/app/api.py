@@ -19,7 +19,10 @@ def simulate(request):
         time_steps = int(request.GET.get("time_steps", ''))
         start = dt.datetime.strptime((request.GET.get("start", '')), '%Y-%m-%d')
         end = dt.datetime.strptime((request.GET.get("end", '')), '%Y-%m-%d')
-        
+        width = int(request.GET.get('width'))
+        height = int(request.GET.get('height'))
+        print(width)
+        print(height)
         monte_object = Monte(ticker=ticker, sim_amount=sim_amount, time_steps=time_steps, start=start, end=end)
         monte_object.create_DataFrame()
         monte_object.simulate()
