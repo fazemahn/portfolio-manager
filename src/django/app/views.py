@@ -22,9 +22,15 @@ def remcom(request, commID):
     return HttpResponse("Comment Removed")
 
 def remfav(request, stockSymbol):
-    return HttpResponse()
     # need to check if already in the list before increasing popularity
     # not done for now.
+    stock = Stock.objects.filter(ticker=stockSymbol).first()
+    curruser = request.user
+    curruser.trader.favorites.remove(stock)
+    stock.popularity -= 1
+    stock.save()
+
+    return HttpResponse("Favorites are Added")
 
 def addfav(request, stockSymbol, stockName):
     stock = Stock.objects.filter(ticker=stockSymbol).first()
@@ -40,6 +46,7 @@ def addfav(request, stockSymbol, stockName):
 
 def home (request):
     """
+    Displays the home page.  Displays favourites if user is logged in
     """
     allstocks = Stock.objects.order_by('popularity').reverse()[:5]
     if request.user.is_authenticated:
@@ -58,6 +65,7 @@ def home (request):
 
 def favourites (request):
     """
+    Displays stocks favourited by the user
     """
     if request.user.is_authenticated:
         comments = Comment.objects.filter(posted_by = request.user)
@@ -90,6 +98,7 @@ def simulate (request, stockSymbol):
     stockInfo['symbol'] = stockSymbol
     stockInfo['name'] = data["price"]["longName"]
     stockInfo['change'] = round(data["price"]["regularMarketChangePercent"]["raw"] * 100, 2)
+    stockInfo['price'] = round(data["price"]["regularMarketPrice"]["raw"], 2)
 
     #if the stock is not in the database, put it in
     stockRecord = Stock.objects.filter(ticker=stockSymbol).first()

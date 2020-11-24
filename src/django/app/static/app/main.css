@@ -140,3 +140,71 @@ a.article-title:hover {
     
     float: right;
 }
+#plot, .plot-container {
+    width: 100%;
+}
+
+.plot-area {
+    background: white;
+    border: 1px solid #e4e4e4;
+    border-radius: 3px 3px 3px 0px;
+    width: 100%;
+    margin-bottom: -1px;
+}
+
+.plot-content {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.plot-tabs {
+    padding: 0px;
+    margin-top: -1px;
+    display: inline;
+    user-select: none;
+}
+
+.plot-tab {
+    cursor: pointer;
+    border: 1px solid #e4e4e4;
+    display: inline-block;
+    text-align: center;
+    background-color: #fafafa;
+    border-radius: 0 0 3px 3px;
+    width: 100px;
+    height: 30px;
+    color: grey;
+}
+
+.plot-tab.tab-selected {
+    background-color: white;
+    border-top: 1px solid white;
+}
+.loader-container {
+    width: 1.5em;
+    height: 1.5em;
+    display: inline-block;
+}
+.loader {    
+    border: 5px solid #f3f3f3; /* Light grey */
+    border-top: 5px solid #28a745; /* Blue */
+    border-radius: 50%;
+    width:100%;
+    height:100%;
+    margin: 0;
+    animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .magic-div {
+      height: 1.5em;
+      padding: 0;
+      margin: 0;
+  }
+
+  

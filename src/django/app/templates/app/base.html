@@ -96,6 +96,7 @@
             {% endblock loginpanels %}
             </div>
         </div>
+        <div style="height: 75px"></div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
@@ -104,23 +105,28 @@
     <script>
         function fn(symbol, name){
             if (symbol != null) {
-                $.get('/addfav/' + symbol + '/' + name);
+                $.get('/favourites/addfav/' + symbol + '/' + name).always(function () {
+                    location.reload();
+                });
             }
             
-            location.reload();
+            
         }
-        function remstock(inputs){
-            var PAGE_URL = inputs+"/removefav";
-            $.get(PAGE_URL);
-            alert("Removed "+inputs+" From Favorites");
-            location.reload();
+        function remstock(symbol){
+            var PAGE_URL = "/favourites/remfav/" + symbol;
+            $.get(PAGE_URL).always(function () {
+                location.reload();
+            });
+            
         }
         function remcomm(data){
             var PAGE_URL = data+"/removecomment";
             alert(PAGE_URL);
-            $.get(PAGE_URL);
-            alert("Removed "+inputs+" From Comments");
-            location.reload();
+            $.get(PAGE_URL).always(function() {
+                alert("Removed "+inputs+" From Comments");
+                location.reload();
+            });
+            
         }
     </script>
     {% block scripts %}

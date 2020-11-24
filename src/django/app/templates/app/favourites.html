@@ -6,7 +6,7 @@
         <div class="media-body">
             <div class="article-metadata">
                 <a class="mr-2" href="{% url 'app-simulate' data %}">{{ data }}</a>
-                <a onclick="remstock('{{ data.ticker }}')"  href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock"></a>
+                <a onclick="remstock('{{ data.ticker }}')" href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock"></a>
             </div>
             <h5><a class="article-title" href="{% url 'app-simulate' data %}">{{ data.name }}</a></h5>
         </div>
@@ -20,7 +20,7 @@
         <div class="media-body">
             <div class="article-metadata">
                 <h3><a class="article-title" href="#">{{ data.about.name }}</a></h3>
-                <a onclick="remcomm('{{ data.id }}')"" href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock"></a>
+                <a onclick="remcomm('{{ data.id }}')" href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock"></a>
                 <small>{{ data.posted_by }}</small>
                 <small class="text-muted">posted {{ data.posted_on }}</small>
             </div>
