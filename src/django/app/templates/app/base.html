@@ -121,9 +121,7 @@
         }
         function remcomm(data){
             var PAGE_URL = data+"/removecomment";
-            alert(PAGE_URL);
             $.get(PAGE_URL).always(function() {
-                alert("Removed "+inputs+" From Comments");
                 location.reload();
             });
             

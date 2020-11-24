@@ -1,33 +1,44 @@
 {% extends "app/base.html" %}
 {% block content %}
     <h1>My Favourites</h1>
-    {% for data in content %}
-    <article class="media content-section">
-        <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="{% url 'app-simulate' data %}">{{ data }}</a>
-                <a onclick="remstock('{{ data.ticker }}')" href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock"></a>
+    {% if content %}
+        {% for data in content %}
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="{% url 'app-simulate' data %}">{{ data }}</a>
+                    <a onclick="remstock('{{ data.ticker }}')" href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock"></a>
+                </div>
+                <h5><a class="article-title" href="{% url 'app-simulate' data %}">{{ data.name }}</a></h5>
             </div>
-            <h5><a class="article-title" href="{% url 'app-simulate' data %}">{{ data.name }}</a></h5>
-        </div>
-    </article>
-    {% endfor %}
+        </article>
+        {% endfor %}
+    {% else %}
+        <span class="text-muted">You don't have any favourites yet</span>
+    {% endif %}
+    
 
     <hr/>
     <h1>Recent Activity</h1>
-    {% for data in comments %}
-    <article class="media content-section">
-        <div class="media-body">
-            <div class="article-metadata">
-                <h3><a class="article-title" href="#">{{ data.about.name }}</a></h3>
-                <a onclick="remcomm('{{ data.id }}')" href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock"></a>
-                <small>{{ data.posted_by }}</small>
-                <small class="text-muted">posted {{ data.posted_on }}</small>
-            </div>
+    {% if comments %}
+        {% for data in comments %}
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <h3 class="d-inline-block"><a class="article-title" href="#">{{ data.about.name }}</a></h3>
+                    <a onclick="remcomm('{{ data.id }}')" href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock d-inline-block"></a>
+                    <br>
+                    <small>{{ data.posted_by }}</small>
+                    <small class="text-muted">posted {{ data.posted_on }}</small>
+                </div>
 
-            <p class="article-content mt-3">{{ data.text }}</p>
-        </div>
-    </article>
-    {% endfor %}
+                <p class="article-content mt-3">{{ data.text }}</p>
+            </div>
+        </article>
+        {% endfor %}
+    {% else %}
+        <span class="text-muted">Nothing to show you. Post a comment and it will appear here</span>
+    {% endif %}
+    
 
 {% endblock content %}
