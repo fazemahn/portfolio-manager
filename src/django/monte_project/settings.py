@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'crispy_forms',
     'app.apps.AppConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -77,10 +78,10 @@ WSGI_APPLICATION = 'monte_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'SCHEMA_NAME',
-        'USER': 'USER_NAME',
-        'PASSWORD': 'PASSWORD',
-        'HOST': 'LOCALHOST',   # Or an IP Address that your DB is hosted on
+        'NAME': 'monte_carlo',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
 }
@@ -125,3 +126,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = 'app-home'
 LOGOUT_REDIRECT_URL = 'app-home'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

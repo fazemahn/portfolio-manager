@@ -1,14 +1,18 @@
 <!-- templates/registration/login.html -->
 {% extends "app/base.html" %}
-{% block loginpanels %}
-
-  
-      <h3>Login</h3>
-      <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn-primary" type="submit">Log In</button>
-      </form>
-  
-
-{% endblock loginpanels %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="media content-section">
+    <div class="media-body mb-1">
+        <h1>Login</h1>
+        <form method="post">
+          {% csrf_token %}
+          {{ form | crispy }}
+          <span class="text-muted">Don't have an account? <a href="{% url 'signup' %}">Sign Up</a>
+          <br>
+          <button class="btn btn-success mt-4" type="submit">Log In</button>
+        </form>
+    </div>
+  </div>
+      
+{% endblock content %}
