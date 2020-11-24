@@ -38,8 +38,7 @@ class Monte:
         self.dpi = dpi
         self.data = pd.DataFrame()
         self.monte_sims = pd.DataFrame()
-        self.figure = plt.figure(figsize=(self.width, self.height))
-
+        #self.figure = plt.figure(figsize=(self.width, self.height))
         
     def create_DataFrame(self):
         """
