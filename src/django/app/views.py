@@ -70,8 +70,9 @@ def favourites (request):
     if request.user.is_authenticated:
         comments = Comment.objects.filter(posted_by = request.user)
         favInfo = request.user.trader.favorites.all()
-        return render(request, 'app/favourites.html', {'content': favInfo, 'comments': comments})
-    return render(request, 'app/favourites.html')
+        allstocks = Stock.objects.order_by('popularity').reverse()[:5]
+        return render(request, 'app/favourites.html', {'content': favInfo, 'comments': comments, 'sidepanels': favInfo, 'topstocks': allstocks})
+    return render(request, 'app/error404.html')
 
 def simulate (request, stockSymbol):
     """
