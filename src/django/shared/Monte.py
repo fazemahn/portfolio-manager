@@ -12,28 +12,33 @@ from scipy.stats import norm
 
 class Monte:
 
-    def __init__(self, ticker, sim_amount, time_steps, start, end=dt.datetime.now(), data_source='yahoo'):
+    def __init__(self, ticker, sim_amount, time_steps, width, height, dpi, start, end, data_source='yahoo'):
         """
         Initialization function for the Monte object.
 
         :param ticker: the ticker label associated with a stock
         :param sim_amount: the amount of simulations to be done
         :param time_steps: the number of time steps into the future the simualtion will go
+        :param width: width of the figure in pixels
+        :param height: height of the figure in pixels
+        :param dpi: the dpi for the browser display
         :param start: the start datetime for the simulations
-        :param end: the end datetime for the simulations. Present time is default.
-        :param data_source: data source from where the stock data is derived. Yahoo finance is the default.
+        :param end: the end datetime for the simulations
+        :param data_source: data source from where the stock data is derived. Yahoo finance is the default
         """
 
         self.ticker = ticker
         self.sim_amount = sim_amount
-        self.time_steps = time_steps
+        self.time_steps = time_steps + 1
         self.start = start
         self.end = end
         self.data_source = data_source
+        self.width = width / dpi
+        self.height = height / dpi
+        self.dpi = dpi
         self.data = pd.DataFrame()
         self.monte_sims = pd.DataFrame()
-        self.figure = plt.figure(figsize=(10,6))
-
+        #self.figure = plt.figure(figsize=(self.width, self.height))
         
     def create_DataFrame(self):
         """
@@ -47,7 +52,7 @@ class Monte:
         """
         Function that does the necessary calculations for the simulation data.
         """
-        np.random.seed(8)
+        # np.random.seed(8) this can be used to seed the simulation so you can repeat results
 
         # Initial data values needed to set up the simulations.
         log_returns = np.log(1 + self.data.pct_change()) # percentage change between current and prior element
@@ -65,7 +70,129 @@ class Monte:
         # Fills monte_sims with simulated prices which are pseudorandomized with daily_returns
         for t in range(1, self.time_steps):
             self.monte_sims[t] = self.monte_sims[t - 1] * daily_returns[t]
+
+    def plot_history(self):
+        """
+        Function that plots the history of stock prices in the time frame set by the user.
+
+        :returns: plot_history_str which is a string which contains the html for the graphical output.
+        :rtype: str
+        """
+
+        stock_plot = self.data.plot(figsize=(self.width, self.height))
+        stock_plot.set_xlabel('Date')
+        stock_plot.set_ylabel('Adjusted Closing Price')
+        stock_plot.set_title("Historical Adjusted Closing Prices Over Time")
+
+        history = plt.gcf()
+        self.history = history
+
+        plot_history_str = mpld3.fig_to_html(self.history) # saves figure to string of html
+        #plot_history_dict = mpld3.fig_to_dict(self.history)
+        return plot_history_str
+
+    def plot_pdf(self):
+        """
+        Function that plots the distribution of simulated prices of a given time step into the future.
+        This histogram is fit to a Probability Density Function with the mean and standard deviation
+        listed in the title.
+
+        :returns: plot_pdf_str which is a string which contains the html for the graphical output.
+        :rtype: str
+        """
     
+        # Histogram for the price frequencies, number of bins can be adjusted'
+        fig = plt.figure(figsize=(self.width, self.height))
+        plt.hist(self.monte_sims[self.time_steps - 2], bins=10, density=True)
+
+        # Probability Density Function
+        sim_mu, sim_sig = norm.fit(self.monte_sims[self.time_steps - 2]) # Simulation mean and standard deviation values
+        xmin, xmax = plt.xlim() # set the xmin and xmax along the x-axis for the pdf
+        x = np.linspace(xmin, xmax)
+        p = norm.pdf(x, sim_mu, sim_sig)
+
+        # Plots frequencies of the Monte Carle simulations fit to normal distribution
+        plt.plot(x, p, 'k') # normal distribution fit
+        plt.xlabel('Adjusted Closing Price')
+        plt.ylabel('Probability Density')
+        title = "Simulated Prices %d Days into the Future\n(PDF fit results: μ = %.4f,  σ = %.4f)" % (self.time_steps - 1, sim_mu, sim_sig)
+        plt.title(title)
+
+        plot_pdf_str = mpld3.fig_to_html(fig) # saves figure to string of html
+        #plot_pdf_dict = mpld3.fig_to_dict(fig)
+        return plot_pdf_str
+    
+    def plot_single(self):
+        """
+        Function that plots the first element in each set of simulations after a given time step.
+        These elements are plotted to show a single simulated projection line.
+
+        :returns: plot_single_str which is a string which contains the html for the graphical output.
+        :rtype: str
+        """
+
+        single = []
+        for item in self.monte_sims:
+            single.append(item[0])
+
+        plt.figure(figsize=(self.width, self.height))
+        plt.plot(single)
+        plt.xlabel('Days into the Future')
+        plt.ylabel('Adjusted Closing Price')
+        plt.title('Simulated Adjusted Closing Prices Over Time')
+
+        single = plt.gcf()
+
+        plot_single_str = mpld3.fig_to_html(single) # saves figure to string of html
+        #plot_single_dict = mpld3.fig_to_dict(single)
+        return plot_single_str
+    
+    def plot_multi(self):
+        """
+        Function that plots all of the price simualtions at each time step into the future.
+
+        :returns: plot_multi_str which is a string which contains the html for the graphical output.
+        :rtype: str
+        """
+
+        plt.figure(figsize=(self.width, self.height))
+        plt.plot(self.monte_sims)
+        plt.xlabel('Days into the Future')
+        plt.ylabel('Adjusted Closing Price')
+        title = "Monte Carlo Simulations for Adjusted Closing Prices"
+        plt.title(title)
+
+        multi = plt.gcf()
+
+        plot_multi_str = mpld3.fig_to_html(multi) # saves figure to string of html
+        #plot_multi_dict = mpld3.fig_to_dict(multi)
+        return plot_multi_str
+    
+    def get_json(self, plot_history_str, plot_pdf_str, plot_single_str, plot_multi_str):
+        """
+        Function that returns the json data for the html plots.
+
+        :returns: plot_json which is the json that contains the html strings for each plot.
+        """
+
+        plot_dict = {
+            "plot_history" : plot_history_str, 
+            "plot_pdf" : plot_pdf_str, 
+            "plot_single" : plot_single_str, 
+            "plot_multi" : plot_multi_str
+        }
+
+        plot_json = json.dumps(plot_dict, indent=4) # converts dictionary to json
+
+        return plot_json
+
+    def clear_figures(self):
+        plt.close('all')
+
+    '''
+    These commented out functions are for if we want to plot all the subplots onto one plot.
+    '''
+    '''
     def plot_all(self):
         """
         Original function which generates one figure with 4 subplots made from user inputs. The 
@@ -123,7 +250,7 @@ class Monte:
         plt.plot(x, p, 'k') # normal distribution fit
         plt.xlabel('Adjusted Closing Price')
         plt.ylabel('Probability Density')
-        title = "Histogram for Simulations of Adjusted Closing Price 1 Day into the Future\nPDF fit results: mu = %.4f,  sigma = %.4f" % (sim_mu, sim_sig)
+        title = "Simulated Prices %d Days into the Future\n(PDF fit results: μ = %.4f,  σ = %.4f)" % (self.time_steps - 1, sim_mu, sim_sig)
         plt.title(title)
 
         # Save the figure to HTML string ##################################################
@@ -133,123 +260,7 @@ class Monte:
         html_str = mpld3.fig_to_html(self.figure) # saves figure to string of html
 
         return html_str
-    
-    def plot_history(self):
-        """
-        Function that plots the history of stock prices in the time frame set by the user.
-
-        :returns: plot_history_str which is a string which contains the html for the graphical output.
-        :rtype: str
-        """
-
-        stock_plot = self.data.plot(figsize=(10, 6))
-        stock_plot.set_xlabel('Date')
-        stock_plot.set_ylabel('Adjusted Closing Price')
-        stock_plot.set_title("Adjusted Closing Prices Over Time")
-
-        history = plt.gcf()
-        self.history = history
-
-        plot_history_str = mpld3.fig_to_html(self.history) # saves figure to string of html
-        plot_history_dict = mpld3.fig_to_dict(self.history)
-        return plot_history_str, plot_history_dict
-
-    def plot_pdf(self):
-        """
-        Function that plots the distribution of simulated prices of a given time step into the future.
-        This histogram is fit to a Probability Density Function with the mean and standard deviation
-        listed in the title.
-
-        :returns: plot_pdf_str which is a string which contains the html for the graphical output.
-        :rtype: str
-        """
-    
-        # Histogram for the price frequencies, number of bins can be adjusted'
-        fig = plt.figure(figsize=(10, 6))
-        plt.hist(self.monte_sims[1], bins=10, density=True)
-
-        # Probability Density Function
-        sim_mu, sim_sig = norm.fit(self.monte_sims[1]) # Simulation mean and standard deviation values
-        xmin, xmax = plt.xlim() # set the xmin and xmax along the x-axis for the pdf
-        x = np.linspace(xmin, xmax)
-        p = norm.pdf(x, sim_mu, sim_sig)
-
-        # Plots frequencies of the Monte Carle simulations fit to normal distribution
-        plt.plot(x, p, 'k') # normal distribution fit
-        plt.xlabel('Adjusted Closing Price')
-        plt.ylabel('Probability Density')
-        title = "Histogram for Simulations of Adjusted Closing Price 1 Day into the Future\n(PDF fit results: mu = %.4f,  sigma = %.4f)" % (sim_mu, sim_sig)
-        plt.title(title)
-
-        plot_pdf_str = mpld3.fig_to_html(fig) # saves figure to string of html
-        plot_pdf_dict = mpld3.fig_to_dict(fig)
-        return plot_pdf_str, plot_pdf_dict
-    
-    def plot_single(self):
-        """
-        Function that plots the first element in each set of simulations after a given time step.
-        These elements are plotted to show a single simulated projection line.
-
-        :returns: plot_single_str which is a string which contains the html for the graphical output.
-        :rtype: str
-        """
-
-        single = []
-        for item in self.monte_sims:
-            single.append(item[0])
-
-        plt.figure(figsize=(10,6))
-        plt.plot(single)
-        plt.xlabel('Date')
-        plt.ylabel('Adjusted Closing Price')
-        plt.title('Simulated Adjusted Closing Prices Over Time')
-
-        single = plt.gcf()
-
-        plot_single_str = mpld3.fig_to_html(single) # saves figure to string of html
-        plot_single_dict = mpld3.fig_to_dict(single)
-        return plot_single_str, plot_single_dict
-    
-    def plot_multi(self):
-        """
-        Function that plots all of the price simualtions at each time step into the future.
-
-        :returns: plot_multi_str which is a string which contains the html for the graphical output.
-        :rtype: str
-        """
-
-        plt.figure(figsize=(10,6))
-        plt.plot(self.monte_sims)
-        plt.xlabel('Days into the Future')
-        plt.ylabel('Adjusted Closing Price')
-        title = "Monte Carlo Simulations for Adjusted Closing Prices"
-        plt.title(title)
-
-        multi = plt.gcf()
-
-        plot_multi_str = mpld3.fig_to_html(multi) # saves figure to string of html
-        plot_multi_dict = mpld3.fig_to_dict(multi)
-        return plot_multi_str, plot_multi_dict
-    
-    def get_json(self, plot_history_dict, plot_pdf_dict, plot_single_dict, plot_multi_dict):
-        """
-        Function that returns the json data for the html plots.
-
-        :returns: plot_json which is the json that contains the html strings for each plot.
-        """
-
-        plot_dict = {
-            "plot_history" : plot_history_dict, 
-            "plot_pdf" : plot_pdf_dict, 
-            "plot_single" : plot_single_dict, 
-            "plot_multi" : plot_multi_dict
-        }
-
-        plot_json = json.dumps(plot_dict, indent=4) # converts dictionary to json
-
-        return plot_json
-
-
+    '''
     '''
     def get_json(self):
         """

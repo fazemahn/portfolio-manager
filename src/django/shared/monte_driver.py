@@ -7,7 +7,7 @@ to output the plots to an html and json file.
 """
 
 # Placeholder example to show Monte object method implementation
-mon = Monte('AMD', 100, 30, start=dt.datetime(2018,1,1), end=dt.datetime.now(), data_source='yahoo')
+mon = Monte('AMD', 100, 30, 700, 400, 100, start=dt.datetime(2018,1,1), end=dt.datetime.now(), data_source='yahoo')
 mon.create_DataFrame()
 mon.simulate()
 
