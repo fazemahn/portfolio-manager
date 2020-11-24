@@ -43,9 +43,10 @@ def addfav(request, stockSymbol, stockName):
     curruser.trader.favorites.add(stock)
     print("Added To Favorites")
     return HttpResponse("Favorites are Added")
-    
+
 def home (request):
     """
+    Displays the home page.  Displays favourites if user is logged in
     """
     allstocks = Stock.objects.order_by('popularity').reverse()[:5]
     if request.user.is_authenticated:
@@ -64,6 +65,7 @@ def home (request):
 
 def favourites (request):
     """
+    Displays stocks favourited by the user
     """
     if request.user.is_authenticated:
         comments = Comment.objects.filter(posted_by = request.user)
@@ -73,8 +75,10 @@ def favourites (request):
 
 def simulate (request, stockSymbol):
     """
+    Makes an api call to yahoo finace to gather stock informtation
+    Gathers comments from database and displays them on the page
     """
-
+    #call api and get stock related information
     conn = http.client.HTTPSConnection("apidojo-yahoo-finance-v1.p.rapidapi.com")
     #api info
     headers = {
@@ -91,13 +95,12 @@ def simulate (request, stockSymbol):
         return render(request, 'app/error404.html')
 
     stockInfo = {}
-    commentInfo = {}
     stockInfo['symbol'] = stockSymbol
     stockInfo['name'] = data["price"]["longName"]
     stockInfo['change'] = round(data["price"]["regularMarketChangePercent"]["raw"] * 100, 2)
     stockInfo['price'] = round(data["price"]["regularMarketPrice"]["raw"], 2)
 
-
+    #if the stock is not in the database, put it in
     stockRecord = Stock.objects.filter(ticker=stockSymbol).first()
     favInfo = {}
     if not stockRecord:
@@ -106,11 +109,13 @@ def simulate (request, stockSymbol):
         favInfo = request.user.trader.favorites.all()
         if request.user.trader.favorites.filter(ticker=stockSymbol).first():
             stockInfo['isFavorite'] = True
-        
 
+
+    #if a user is posting a new comment, add that comment to the database
     if request.method == "POST":
         Comment.objects.create(text=request.POST.get('comment_body'), posted_by=request.user, about=stockRecord)
 
+    commentInfo = {}
     #find all comments for the stock that was clicked on
     comments = Comment.objects.filter(about__ticker=stockSymbol)
 
@@ -133,8 +138,9 @@ def simulate (request, stockSymbol):
 
 def searchName(request):
     """
+    Uses the autofill api query to get all results that match the users input
     """
-    
+
     results = {}
     if request.method == "POST":
         req = request.POST.get('searchBar')
@@ -180,5 +186,5 @@ def searchName(request):
                 results[favorite.ticker]['isFavorite'] = True
             favInfo = request.user.trader.favorites.all()
             return render(request, 'app/searchForm.html', {'results': results, 'sidepanels': favInfo, 'topstocks': allstocks})
-    
+
     return render(request, 'app/searchForm.html', {'results': results, 'topstocks': allstocks})
