@@ -6,4 +6,5 @@ How to run:
  - Navigate to django directory `cd django`
  - Run the command `python manage.py makemigrations`
  - Then run `python manage.py migrate` to create the required tables
- - You should now be able to browse the site
+ - Once migration is complete, run the command `python manage.py runserver` to run the application
+ - You should now be able to browse the site on localhost:8000
