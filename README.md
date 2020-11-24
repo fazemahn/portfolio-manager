@@ -1,6 +1,7 @@
 # MonteCarlo
 How to run:
  - First ensure that the file `./src/django/monte_project/settings.py` contains credentials for a mysql database
+ - Have Python 3 installed on your machine
  - Open a powershell in the src directory
  - Run the command `pip -r install ../requirements.txt`
  - Navigate to django directory `cd django`
