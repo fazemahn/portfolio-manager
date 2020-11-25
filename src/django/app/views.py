@@ -43,6 +43,9 @@ def remfav(request, stockSymbol):
     return HttpResponse("Favorite Removed")
 
 def addfav(request, stockSymbol, stockName):
+    """
+    """
+    
     stock = Stock.objects.filter(ticker=stockSymbol).first()
     if not stock:
         stock = Stock.objects.create(ticker=stockSymbol, name=stockName)
@@ -57,6 +60,7 @@ def addfav(request, stockSymbol, stockName):
 def home (request):
     """
     """
+    
     #get top five stocks in descending order by popularity
     allstocks = Stock.objects.order_by('popularity').reverse()[:5]
     if request.user.is_authenticated:
