@@ -48,16 +48,16 @@ def addfav(request, stockSymbol, stockName):
         stock = Stock.objects.create(ticker=stockSymbol, name=stockName)
     curruser = request.user
     curruser.trader.favorites.remove(stock)
-    stock.popularity -= 1
+    stock.popularity += 1
     stock.save()
     curruser.trader.favorites.add(stock)
     print("Added To Favorites")
     return HttpResponse("Favorites are Added")
-    
+
 def home (request):
     """
     """
-
+    #get top five stocks in descending order by popularity
     allstocks = Stock.objects.order_by('popularity').reverse()[:5]
     if request.user.is_authenticated:
         try:
@@ -118,7 +118,7 @@ def simulate (request, stockSymbol):
         favInfo = request.user.trader.favorites.all()
         if request.user.trader.favorites.filter(ticker=stockSymbol).first():
             stockInfo['isFavorite'] = True
-        
+
 
     if request.method == "POST":
         Comment.objects.create(text=request.POST.get('comment_body'), posted_by=request.user, about=stockRecord)
@@ -146,7 +146,7 @@ def simulate (request, stockSymbol):
 def searchName(request):
     """
     """
-    
+
     results = {}
     if request.method == "POST":
         req = request.POST.get('searchBar')
@@ -192,7 +192,7 @@ def searchName(request):
                 results[favorite.ticker]['isFavorite'] = True
             favInfo = request.user.trader.favorites.all()
             return render(request, 'app/searchForm.html', {'results': results, 'sidepanels': favInfo, 'topstocks': allstocks})
-    
+
     return render(request, 'app/searchForm.html', {'results': results, 'topstocks': allstocks})
 
 def messages(request):
@@ -216,7 +216,6 @@ def messages(request):
 def remmessage(request, id):
     """
     """
-    
+
     Message.objects.get(pk=id).delete()
     return HttpResponse("Message Removed")
-
