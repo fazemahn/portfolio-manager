@@ -92,8 +92,6 @@
                 </p>
             
             {% endif %}
-            {% block loginpanels %}
-            {% endblock loginpanels %}
             </div>
         </div>
         <div style="height: 75px"></div>
@@ -121,9 +119,7 @@
         }
         function remcomm(data){
             var PAGE_URL = data+"/removecomment";
-            alert(PAGE_URL);
             $.get(PAGE_URL).always(function() {
-                alert("Removed "+inputs+" From Comments");
                 location.reload();
             });
             
