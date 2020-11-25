@@ -1,0 +1,31 @@
+{% extends "app/base.html" %}
+{% block content %}
+<h1>My Messages</h1>
+    {% if messages %}
+        {% for data in messages %}
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <h3 class="d-inline-block"><a class="article-title" href="#">{{ data.sender }}</a></h3>
+                    <small class="text-muted">Recieved on {{ data.date }}</small>
+                    <a onclick="remmessage('{{ data.id }}')" href="#" class="float-right fa fa-minus-circle text-danger rem-fav-stock d-inline-block"></a>
+                </div>
+                <p class="article-content mt-3">{{ data.text }}</p>
+            </div>
+        </article>
+        {% endfor %}
+    {% else %}
+        <span class="text-muted">You don't have any messages at this time.</span>
+    {% endif %}
+    <hr/>
+    <h1>Send Message</h1>
+    {% if error_message %} <p class="text-danger"><strong>{{ error_message }}</strong></p> {% endif %}
+      <form action = "{% url 'app-messages' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" id="recipient" name="username" placeholder="Username">
+        <textarea required class="mt-4 textbox-input" name="message_body" placeholder="Message Body..."></textarea>
+        <input type="submit" value="Send">
+      </form>
+      <br>
+      <hr/>
+{% endblock content%}

@@ -32,7 +32,8 @@
                     <div class="navbar-nav mr-auto">
                         <a class="nav-item nav-link" href="{% url 'app-home' %}">Home</a>
                         {% if user.is_authenticated %}
-                            <a class="nav-item nav-link" href="{% url 'app-favourites' %}">Favourites</a>
+                        <a class="nav-item nav-link" href="{% url 'app-favourites' %}">Favourites</a>
+                        <a class="nav-item nav-link" href="{% url 'app-messages' %}">Messages</a>
                         {% endif %}
                     </div>
                     <!-- Navbar Right Side -->
@@ -55,13 +56,13 @@
     <main role="main" class="container">
         <div class="row">
             <div class="col-md-8">
-                {% if messages %}
+                <!-- {% if messages %}
                     {% for message in messages %}
                         <div class="alert alert-{{ message.tags }}">
                             {{ message }}
                         </div>
                     {% endfor %}
-                {% endif %}
+                {% endif %} -->
 
                 {% block content %}
 
@@ -70,7 +71,7 @@
             <div class="col-md-4 content-selection">
             {% if sidepanels %}
             
-                <h3>Favorites</h3>
+                <h3>Favourites</h3>
                 <p class='text-muted'>
                     <ul class="list-group">
                         {% for side in sidepanels %}
@@ -92,8 +93,6 @@
                 </p>
             
             {% endif %}
-            {% block loginpanels %}
-            {% endblock loginpanels %}
             </div>
         </div>
         <div style="height: 75px"></div>
@@ -121,12 +120,16 @@
         }
         function remcomm(data){
             var PAGE_URL = data+"/removecomment";
-            alert(PAGE_URL);
             $.get(PAGE_URL).always(function() {
-                alert("Removed "+inputs+" From Comments");
                 location.reload();
             });
             
+        }
+        function remmessage(data){
+            var url = data+"/removemessage";
+            $.get(url).always(function() {
+                location.reload()
+            });
         }
     </script>
     {% block scripts %}

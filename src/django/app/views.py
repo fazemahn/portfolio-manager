@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.http import Http404
 from datetime import datetime, timedelta
+from django.urls import reverse
 
-from app.models import Comment, Stock, User, Trader
+from app.models import Comment, Stock, User, Trader, Message
 import http.client
 import json #to parse finance API
 # Create your views here.
@@ -13,15 +14,24 @@ from django.views import generic
 
 
 class SignUpView(generic.CreateView):
+    """
+    """
+
     form_class = UserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
 
 def remcom(request, commID):
+    """
+    """
+
     Comment.objects.get(pk=commID).delete()
     return HttpResponse("Comment Removed")
 
 def remfav(request, stockSymbol):
+    """
+    """
+
     # need to check if already in the list before increasing popularity
     # not done for now.
     stock = Stock.objects.filter(ticker=stockSymbol).first()
@@ -30,7 +40,7 @@ def remfav(request, stockSymbol):
     stock.popularity -= 1
     stock.save()
 
-    return HttpResponse("Favorites are Added")
+    return HttpResponse("Favorite Removed")
 
 def addfav(request, stockSymbol, stockName):
     stock = Stock.objects.filter(ticker=stockSymbol).first()
@@ -43,11 +53,11 @@ def addfav(request, stockSymbol, stockName):
     curruser.trader.favorites.add(stock)
     print("Added To Favorites")
     return HttpResponse("Favorites are Added")
-
+    
 def home (request):
     """
-    Displays the home page.  Displays favourites if user is logged in
     """
+
     allstocks = Stock.objects.order_by('popularity').reverse()[:5]
     if request.user.is_authenticated:
         try:
@@ -65,20 +75,20 @@ def home (request):
 
 def favourites (request):
     """
-    Displays stocks favourited by the user
     """
+
     if request.user.is_authenticated:
         comments = Comment.objects.filter(posted_by = request.user)
-        favInfo = request.user.trader.favorites.all()
-        return render(request, 'app/favourites.html', {'content': favInfo, 'comments': comments})
+        favInfo = request.user.trader.favorites.order_by('id')
+        discussions = Comment.objects.filter(about__in=favInfo).order_by('-posted_on')
+        print(discussions)
+        return render(request, 'app/favourites.html', {'content': favInfo, 'comments': comments, 'discussions': discussions})
     return render(request, 'app/favourites.html')
 
 def simulate (request, stockSymbol):
     """
-    Makes an api call to yahoo finace to gather stock informtation
-    Gathers comments from database and displays them on the page
     """
-    #call api and get stock related information
+
     conn = http.client.HTTPSConnection("apidojo-yahoo-finance-v1.p.rapidapi.com")
     #api info
     headers = {
@@ -95,12 +105,11 @@ def simulate (request, stockSymbol):
         return render(request, 'app/error404.html')
 
     stockInfo = {}
+    commentInfo = {}
     stockInfo['symbol'] = stockSymbol
     stockInfo['name'] = data["price"]["longName"]
     stockInfo['change'] = round(data["price"]["regularMarketChangePercent"]["raw"] * 100, 2)
-    stockInfo['price'] = round(data["price"]["regularMarketPrice"]["raw"], 2)
 
-    #if the stock is not in the database, put it in
     stockRecord = Stock.objects.filter(ticker=stockSymbol).first()
     favInfo = {}
     if not stockRecord:
@@ -109,13 +118,11 @@ def simulate (request, stockSymbol):
         favInfo = request.user.trader.favorites.all()
         if request.user.trader.favorites.filter(ticker=stockSymbol).first():
             stockInfo['isFavorite'] = True
+        
 
-
-    #if a user is posting a new comment, add that comment to the database
     if request.method == "POST":
         Comment.objects.create(text=request.POST.get('comment_body'), posted_by=request.user, about=stockRecord)
 
-    commentInfo = {}
     #find all comments for the stock that was clicked on
     comments = Comment.objects.filter(about__ticker=stockSymbol)
 
@@ -138,9 +145,8 @@ def simulate (request, stockSymbol):
 
 def searchName(request):
     """
-    Uses the autofill api query to get all results that match the users input
     """
-
+    
     results = {}
     if request.method == "POST":
         req = request.POST.get('searchBar')
@@ -186,5 +192,31 @@ def searchName(request):
                 results[favorite.ticker]['isFavorite'] = True
             favInfo = request.user.trader.favorites.all()
             return render(request, 'app/searchForm.html', {'results': results, 'sidepanels': favInfo, 'topstocks': allstocks})
-
+    
     return render(request, 'app/searchForm.html', {'results': results, 'topstocks': allstocks})
+
+def messages(request):
+    """
+    """
+
+    if request.method == "POST":
+        try:
+            recipient = User.objects.get(username=request.POST['username'])
+            newmessage = Message.objects.create(text=request.POST['message_body'], sender=request.user)
+            recipient.trader.messages.add(newmessage)
+            return HttpResponseRedirect(reverse('app-messages'))
+        except(KeyError, User.DoesNotExist):
+            return HttpResponseRedirect(reverse('app-messages'))
+            # return render(request, 'app/messages.html', {'error_message': "Please type correct Username"})
+    messagelist = request.user.trader.messages.order_by('date').reverse()
+    print(messagelist)
+    # return HttpResponseRedirect(reverse('app-messages', args=({'messages': messagelist},)))
+    return render(request, 'app/messages.html', {'messages': messagelist})
+
+def remmessage(request, id):
+    """
+    """
+    
+    Message.objects.get(pk=id).delete()
+    return HttpResponse("Message Removed")
+
