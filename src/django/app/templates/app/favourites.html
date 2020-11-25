@@ -40,5 +40,26 @@
         <span class="text-muted">Nothing to show you. Post a comment and it will appear here</span>
     {% endif %}
     
+    <hr/>
+    <h1>Recent Discussions</h1>
+    {% if discussions %}
+        {% for data in discussions %}
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <h3 class="d-inline-block"><a class="article-title" href="#">{{ data.about.name }}</a></h3>
+                    <br>
+                    <small>{{ data.posted_by }}</small>
+                    <small class="text-muted">posted {{ data.posted_on }}</small>
+                </div>
+
+                <p class="article-content mt-3">{{ data.text }}</p>
+            </div>
+        </article>
+        {% endfor %}
+    {% else %}
+        <span class="text-muted">Nothing to show you. Post a comment and it will appear here</span>
+    {% endif %}
+ 
 
 {% endblock content %}
