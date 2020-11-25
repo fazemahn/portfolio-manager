@@ -14,5 +14,4 @@ urlpatterns = [
     path('favourites/<int:commID>/removecomment', views.remcom, name= 'remcom'),
     path('messages/', views.messages, name = 'app-messages'),
     path('messages/<int:id>/removemessage', views.remmessage, name = 'app-removemessage'),
-
 ]

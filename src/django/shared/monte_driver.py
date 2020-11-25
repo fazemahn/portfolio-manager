@@ -42,3 +42,5 @@ plot_json = mon.get_json(html_str, html_str2, html_str3, html_str4)
 json_file = open("plots.json","w")
 json_file.write(plot_json)
 json_file.close()
+
+mon.clear_figures()

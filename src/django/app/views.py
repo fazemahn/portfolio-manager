@@ -14,15 +14,24 @@ from django.views import generic
 
 
 class SignUpView(generic.CreateView):
+    """
+    """
+
     form_class = UserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
 
 def remcom(request, commID):
+    """
+    """
+
     Comment.objects.get(pk=commID).delete()
     return HttpResponse("Comment Removed")
 
 def remfav(request, stockSymbol):
+    """
+    """
+
     # need to check if already in the list before increasing popularity
     # not done for now.
     stock = Stock.objects.filter(ticker=stockSymbol).first()
@@ -48,6 +57,7 @@ def addfav(request, stockSymbol, stockName):
 def home (request):
     """
     """
+
     allstocks = Stock.objects.order_by('popularity').reverse()[:5]
     if request.user.is_authenticated:
         try:
@@ -66,6 +76,7 @@ def home (request):
 def favourites (request):
     """
     """
+
     if request.user.is_authenticated:
         comments = Comment.objects.filter(posted_by = request.user)
         favInfo = request.user.trader.favorites.order_by('id')
@@ -98,7 +109,6 @@ def simulate (request, stockSymbol):
     stockInfo['symbol'] = stockSymbol
     stockInfo['name'] = data["price"]["longName"]
     stockInfo['change'] = round(data["price"]["regularMarketChangePercent"]["raw"] * 100, 2)
-
 
     stockRecord = Stock.objects.filter(ticker=stockSymbol).first()
     favInfo = {}
@@ -186,6 +196,9 @@ def searchName(request):
     return render(request, 'app/searchForm.html', {'results': results, 'topstocks': allstocks})
 
 def messages(request):
+    """
+    """
+
     if request.method == "POST":
         try:
             recipient = User.objects.get(username=request.POST['username'])
@@ -199,7 +212,11 @@ def messages(request):
     print(messagelist)
     # return HttpResponseRedirect(reverse('app-messages', args=({'messages': messagelist},)))
     return render(request, 'app/messages.html', {'messages': messagelist})
+
 def remmessage(request, id):
+    """
+    """
+    
     Message.objects.get(pk=id).delete()
     return HttpResponse("Message Removed")
 
