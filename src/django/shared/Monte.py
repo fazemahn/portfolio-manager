@@ -52,6 +52,7 @@ class Monte:
         """
         Function that does the necessary calculations for the simulation data.
         """
+
         # np.random.seed(8) this can be used to seed the simulation so you can repeat results
 
         # Initial data values needed to set up the simulations.
