@@ -69,7 +69,7 @@ def favourites (request):
     if request.user.is_authenticated:
         comments = Comment.objects.filter(posted_by = request.user)
         favInfo = request.user.trader.favorites.order_by('id')
-        discussions = Comment.objects.filter(about__in=favInfo)
+        discussions = Comment.objects.filter(about__in=favInfo).order_by('-posted_on')
         print(discussions)
         return render(request, 'app/favourites.html', {'content': favInfo, 'comments': comments, 'discussions': discussions})
     return render(request, 'app/favourites.html')
