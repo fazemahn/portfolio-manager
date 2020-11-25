@@ -12,6 +12,7 @@ How to run:
 
 Common error(s)
  - The mpld3 library might show this error when attempting to display the plots: `'XAxis' object has no attribute '_gridOnMajor'`.
- - To fix this error, one can alter the `utils.py` file located in the `Lib\site-packages\mpld3\mplexporter` directory outlined in the fix here: https://github.com/plotly/plotly.py/issues/2913
-https://github.com/carlinmack/mplexporter/commit/739793fdda66809df80bb6b2d19c0605544f8292.
+ - To fix this error, one can alter the `utils.py` file located in the `Lib\site-packages\mpld3\mplexporter` directory outlined in the fix here: 
+ https://github.com/plotly/plotly.py/issues/2913
+ https://github.com/carlinmack/mplexporter/commit/739793fdda66809df80bb6b2d19c0605544f8292.
  - change `_gridOnMajor` to `_major_tick_kw['gridOn']` on line 263.
