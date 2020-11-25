@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.http import Http404
 from datetime import datetime, timedelta
+from django.urls import reverse
 
-from app.models import Comment, Stock, User, Trader
+from app.models import Comment, Stock, User, Trader, Message
 import http.client
 import json #to parse finance API
 # Create your views here.
@@ -30,7 +31,7 @@ def remfav(request, stockSymbol):
     stock.popularity -= 1
     stock.save()
 
-    return HttpResponse("Favorites are Added")
+    return HttpResponse("Favorite Removed")
 
 def addfav(request, stockSymbol, stockName):
     stock = Stock.objects.filter(ticker=stockSymbol).first()
@@ -183,3 +184,22 @@ def searchName(request):
             return render(request, 'app/searchForm.html', {'results': results, 'sidepanels': favInfo, 'topstocks': allstocks})
     
     return render(request, 'app/searchForm.html', {'results': results, 'topstocks': allstocks})
+
+def messages(request):
+    if request.method == "POST":
+        try:
+            recipient = User.objects.get(username=request.POST['username'])
+            newmessage = Message.objects.create(text=request.POST['message_body'], sender=request.user)
+            recipient.trader.messages.add(newmessage)
+            return HttpResponseRedirect(reverse('app-messages'))
+        except(KeyError, User.DoesNotExist):
+            return HttpResponseRedirect(reverse('app-messages'))
+            # return render(request, 'app/messages.html', {'error_message': "Please type correct Username"})
+    messagelist = request.user.trader.messages.order_by('date').reverse()
+    print(messagelist)
+    # return HttpResponseRedirect(reverse('app-messages', args=({'messages': messagelist},)))
+    return render(request, 'app/messages.html', {'messages': messagelist})
+def remmessage(request, id):
+    Message.objects.get(pk=id).delete()
+    return HttpResponse("Message Removed")
+
