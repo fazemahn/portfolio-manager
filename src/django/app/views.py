@@ -113,6 +113,7 @@ def simulate (request, stockSymbol):
     stockInfo['symbol'] = stockSymbol
     stockInfo['name'] = data["price"]["longName"]
     stockInfo['change'] = round(data["price"]["regularMarketChangePercent"]["raw"] * 100, 2)
+    stockInfo['price'] = round(data["price"]["regularMarketPrice"]["raw"], 2)
 
     stockRecord = Stock.objects.filter(ticker=stockSymbol).first()
     favInfo = {}
